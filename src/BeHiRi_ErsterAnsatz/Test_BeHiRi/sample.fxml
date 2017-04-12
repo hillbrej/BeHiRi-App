@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<FlowPane prefWrapLength="300.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1">
+         <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+            <SplitPane dividerPositions="0.41318864774624375" prefHeight="600.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <ListView prefHeight="598.0" prefWidth="492.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="701.0">
+                     <children>
+                        <Label layoutX="4.0" layoutY="6.0" text="Movie Details">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+                        <GridPane layoutX="4.0" layoutY="32.0" prefHeight="185.0" prefWidth="409.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="30.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="30.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Title" />
+                              <Label text="Release Date" GridPane.rowIndex="1" />
+                              <Label text="Directed By" GridPane.rowIndex="2" />
+                              <Label text="Starring" GridPane.rowIndex="3" />
+                              <Label text="Running Time" GridPane.rowIndex="4" />
+                              <Label text="Country" GridPane.rowIndex="5" />
+                              <Label text="Batman (1989 film)" GridPane.columnIndex="1" />
+                              <Label text="June 23, 1989" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="Tim Burton" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label text="Jack Nicholson and Michel Keaton" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label text="126 Minutes" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label text="United States" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                           </children>
+                        </GridPane>
+                  <ImageView fitHeight="300.0" fitWidth="399.0" layoutX="60.0" layoutY="230.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Batman_(1989)_theatrical_poster.jpg" />
+                     </image>
+                  </ImageView>
+                        <ButtonBar layoutX="14.0" layoutY="544.0" prefHeight="40.0" prefWidth="226.0">
+                          <buttons>
+                            <Button mnemonicParsing="false" text="Export..." />
+                             <Button mnemonicParsing="false" text="Edit" />
+                             <Button mnemonicParsing="false" text="Remove" />
+                          </buttons>
+                        </ButtonBar>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+      <ButtonBar buttonMinWidth="150.0" prefHeight="50.0" prefWidth="500.0">
+        <buttons>
+            <Button mnemonicParsing="false" prefWidth="100" text="Add..." />
+            <Button mnemonicParsing="false" prefWidth="100" text="Open Search-Bar" />
+            <Button layoutX="50" mnemonicParsing="false" prefWidth="100" text="Open Favourites" />
+            <Button mnemonicParsing="false" prefWidth="100" text="Open Still-To-Watch List" />
+            <Button mnemonicParsing="false" prefWidth="100" text="Logout" />
+            <Button mnemonicParsing="false" prefWidth="100" text="Exit" />
+        </buttons>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <FlowPane.margin>
+            <Insets />
+         </FlowPane.margin>
+      </ButtonBar>
+         </children>
+</FlowPane>
