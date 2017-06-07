@@ -1,11 +1,279 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 
+<TabPane fx:id="TabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="780.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Main.Controller">
+  <tabs>
+    <Tab text="Online-Suche">
+         <content>
+            <SplitPane dividerPositions="0.22435897435897437" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <ScrollPane prefHeight="371.0" prefWidth="168.0">
+                     <content>
+                        <FlowPane prefHeight="358.0" prefWidth="172.0">
+                           <children>
+                              <Label text="Sucheingabe:">
+                                 <FlowPane.margin>
+                                    <Insets left="20.0" top="5.0" />
+                                 </FlowPane.margin>
+                              </Label>
+                              <TextField fx:id="textfieldSearch" onKeyReleased="#searchMovies">
+                                 <FlowPane.margin>
+                                    <Insets left="10.0" top="5.0" />
+                                 </FlowPane.margin>
+                              </TextField>
+                              <Label text="Filtern nach:">
+                                 <FlowPane.margin>
+                                    <Insets left="20.0" top="5.0" />
+                                 </FlowPane.margin>
+                              </Label>
+                              <ComboBox fx:id="myCombobox" prefWidth="150.0" promptText="Auswählen">
+                                 <FlowPane.margin>
+                                    <Insets left="10.0" top="5.0" />
 
-<FlowPane xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <ListView prefHeight="200.0" prefWidth="405.0" />
-   </children>
-</FlowPane>
+                                 </FlowPane.margin>
+                              </ComboBox>
+                              <Label text="Ergebnis:">
+                                 <FlowPane.margin>
+                                    <Insets left="20.0" top="5.0" />
+                                 </FlowPane.margin>
+                              </Label>
+                              <ScrollPane prefHeight="229.0" prefWidth="166.0">
+                                 <content>
+                                    <ListView fx:id="myListView" prefHeight="227.0" prefWidth="164.0" />
+                                 </content>
+                                 <FlowPane.margin>
+                                    <Insets left="5.0" />
+                                 </FlowPane.margin>
+                              </ScrollPane>
+                           </children>
+                        </FlowPane>
+                     </content>
+                  </ScrollPane>
+                  <SplitPane dividerPositions="0.7277628032345014" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
+                    <items>
+                        <ScrollPane prefHeight="362.0" prefWidth="602.0">
+                           <content>
+                              <FlowPane prefHeight="370.0" prefWidth="601.0">
+                                 <children>
+                                    <TextArea fx:id="textAreaDetail" editable="false" prefHeight="253.0" prefWidth="381.0" wrapText="true" />
+                                    <ImageView fx:id="imageViewMovie" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children></FlowPane>
+                           </content>
+                        </ScrollPane>
+                        <ScrollPane prefHeight="0.0" prefWidth="602.0">
+                           <content>
+                              <FlowPane prefHeight="98.0" prefWidth="601.0">
+                                 <children>
+                                    <ImageView fx:id="imageViewStar1" fitHeight="70.0" fitWidth="40.0" onMouseEntered="#changeImageStarToFull" onMouseExited="#changeImageStarToEmpty" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../SternLeer.png" />
+                                       </image>
+                                       <FlowPane.margin>
+                                          <Insets left="5.0" top="10.0" />
+                                       </FlowPane.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="imageViewStar2" fitHeight="70.0" fitWidth="40.0" layoutX="10.0" layoutY="10.0" onMouseEntered="#changeImageStarToFull2" onMouseExited="#changeImageStarToEmpty2" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../SternLeer.png" />
+                                       </image>
+                                       <FlowPane.margin>
+                                          <Insets top="10.0" />
+                                       </FlowPane.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="imageViewStar3" fitHeight="70.0" fitWidth="40.0" layoutX="50.0" layoutY="10.0" onMouseEntered="#changeImageStarToFull3" onMouseExited="#changeImageStarToEmpty3" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../SternLeer.png" />
+                                       </image>
+                                       <FlowPane.margin>
+                                          <Insets top="10.0" />
+                                       </FlowPane.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="imageViewStar4" fitHeight="70.0" fitWidth="40.0" layoutX="90.0" layoutY="10.0" onMouseEntered="#changeImageStarToFull4" onMouseExited="#changeImageStarToEmpty4" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../SternLeer.png" />
+                                       </image>
+                                       <FlowPane.margin>
+                                          <Insets top="10.0" />
+                                       </FlowPane.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="imageViewStar5" fitHeight="70.0" fitWidth="40.0" layoutX="130.0" layoutY="10.0" onMouseEntered="#changeImageStarToFull5" onMouseExited="#changeImageStarToEmpty5" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../SternLeer.png" />
+                                       </image>
+                                       <FlowPane.margin>
+                                          <Insets top="10.0" />
+                                       </FlowPane.margin>
+                                    </ImageView>
+                                    <Button fx:id="toFavouritelistButton" mnemonicParsing="false" text="Zu Favoritenliste">
+                                       <FlowPane.margin>
+                                          <Insets left="20.0" top="10.0" />
+                                       </FlowPane.margin>
+                                    </Button>
+                                    <Button fx:id="toReminderlistButton" mnemonicParsing="false" text="Zu Merkliste">
+                                       <FlowPane.margin>
+                                          <Insets left="20.0" top="10.0" />
+                                       </FlowPane.margin>
+                                    </Button>
+                                 </children></FlowPane>
+                           </content>
+                        </ScrollPane>
+                    </items>
+                  </SplitPane>
+              </items>
+            </SplitPane>
+         </content>
+    </Tab>
+    <Tab text="Favoritenliste">
+        <content>
+            <SplitPane dividerPositions="0.22435897435897437" prefHeight="160.0" prefWidth="200.0">
+                <items>
+                    <ScrollPane prefHeight="371.0" prefWidth="168.0">
+                        <content>
+                            <FlowPane prefHeight="358.0" prefWidth="172.0">
+                                <children>
+                                    <Label text="Sucheingabe:">
+                                        <FlowPane.margin>
+                                            <Insets left="20.0" top="5.0" />
+                                        </FlowPane.margin>
+                                    </Label>
+                                    <TextField fx:id="textfieldSearchFav" onInputMethodTextChanged="#searchMoviesFav" onKeyTyped="#searchMoviesFav">
+                                        <FlowPane.margin>
+                                            <Insets left="10.0" top="5.0" />
+                                        </FlowPane.margin>
+                                    </TextField>
+                                    <Label text="Filtern nach:">
+                                        <FlowPane.margin>
+                                            <Insets left="20.0" top="5.0" />
+                                        </FlowPane.margin>
+                                    </Label>
+                                    <ComboBox fx:id="myComboboxFav" prefWidth="150.0" promptText="Auswählen">
+                                        <FlowPane.margin>
+                                            <Insets left="10.0" top="5.0" />
+
+                                        </FlowPane.margin>
+                                    </ComboBox>
+                                    <Label text="Ergebnis:">
+                                        <FlowPane.margin>
+                                            <Insets left="20.0" top="5.0" />
+                                        </FlowPane.margin>
+                                    </Label>
+                                    <ScrollPane prefHeight="229.0" prefWidth="166.0">
+                                        <content>
+                                            <ListView fx:id="myListViewFav" prefHeight="227.0" prefWidth="164.0" />
+                                        </content>
+                                        <FlowPane.margin>
+                                            <Insets left="5.0" />
+                                        </FlowPane.margin>
+                                    </ScrollPane>
+                                </children>
+                            </FlowPane>
+                        </content>
+                    </ScrollPane>
+                    <SplitPane dividerPositions="0.7277628032345014" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
+                        <items>
+                            <ScrollPane prefHeight="362.0" prefWidth="602.0">
+                                <content>
+                                    <FlowPane prefHeight="370.0" prefWidth="601.0">
+                                        <children>
+                                            <Label text="text der ausgegeben wird" />
+                                        </children></FlowPane>
+                                </content>
+                            </ScrollPane>
+                            <ScrollPane prefHeight="0.0" prefWidth="602.0">
+                                <content>
+                                    <FlowPane prefHeight="98.0" prefWidth="601.0">
+                                        <children>
+                                            <ImageView fx:id="imageViewStarFav1" fitHeight="70.0" fitWidth="40.0" onMouseEntered="#changeImageStarToFullFav" onMouseExited="#changeImageStarToEmptyFav" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../SternLeer.png" />
+                                                </image>
+                                                <FlowPane.margin>
+                                                    <Insets left="5.0" top="10.0" />
+                                                </FlowPane.margin>
+                                            </ImageView>
+                                            <ImageView fx:id="imageViewStarFav2" fitHeight="70.0" fitWidth="40.0" layoutX="10.0" layoutY="10.0" onMouseEntered="#changeImageStarToFullFav2" onMouseExited="#changeImageStarToEmptyFav2" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../SternLeer.png" />
+                                                </image>
+                                                <FlowPane.margin>
+                                                    <Insets top="10.0" />
+                                                </FlowPane.margin>
+                                            </ImageView>
+                                            <ImageView fx:id="imageViewStarFav3" fitHeight="70.0" fitWidth="40.0" layoutX="50.0" layoutY="10.0" onMouseEntered="#changeImageStarToFullFav3" onMouseExited="#changeImageStarToEmptyFav3" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../SternLeer.png" />
+                                                </image>
+                                                <FlowPane.margin>
+                                                    <Insets top="10.0" />
+                                                </FlowPane.margin>
+                                            </ImageView>
+                                            <ImageView fx:id="imageViewStarFav4" fitHeight="70.0" fitWidth="40.0" layoutX="90.0" layoutY="10.0" onMouseEntered="#changeImageStarToFullFav4" onMouseExited="#changeImageStarToEmptyFav4" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../SternLeer.png" />
+                                                </image>
+                                                <FlowPane.margin>
+                                                    <Insets top="10.0" />
+                                                </FlowPane.margin>
+                                            </ImageView>
+                                            <ImageView fx:id="imageViewStarFav5" fitHeight="70.0" fitWidth="40.0" layoutX="130.0" layoutY="10.0" onMouseEntered="#changeImageStarToFullFav5" onMouseExited="#changeImageStarToEmptyFav5" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../SternLeer.png" />
+                                                </image>
+                                                <FlowPane.margin>
+                                                    <Insets top="10.0" />
+                                                </FlowPane.margin>
+                                            </ImageView>
+                                            <Button fx:id="deleteFavouritelistButtonFav" mnemonicParsing="false" text="Zu Favoritenliste">
+                                                <FlowPane.margin>
+                                                    <Insets left="20.0" top="10.0" />
+                                                </FlowPane.margin>
+                                            </Button>
+                                            <Button fx:id="toReminderlistButtonFav" mnemonicParsing="false" text="Zu Merkliste">
+                                                <FlowPane.margin>
+                                                    <Insets left="20.0" top="10.0" />
+                                                </FlowPane.margin>
+                                            </Button>
+                                        </children></FlowPane>
+                                </content>
+                            </ScrollPane>
+                        </items>
+                    </SplitPane>
+                </items>
+            </SplitPane>
+        </content>
+    </Tab>
+      <Tab text="Merkliste">
+         <content>
+            <SplitPane dividerPositions="0.1794871794871795" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+              </items>
+            </SplitPane>
+         </content>
+      </Tab>
+      <Tab text="About">
+          <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          </content>
+      </Tab>
+  </tabs>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+</TabPane>

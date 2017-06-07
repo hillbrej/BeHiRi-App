@@ -110,4 +110,39 @@ public class Movies {
         return movies;
     }
 
+    public String showDetails(String title, MovieGenres genresIds){
+        String output = "";
+        String genres = "";
+        System.out.println("Film Titel: " + title);
+
+        for(Movies.Results item : this.getResults()) {
+            if (item.getTitle() == title) {
+                output = "Titel:\t\t\t\t" + title + "\n";
+                output = output + "Originaltitel:\t\t" + item.getOriginal_title() + "\n";
+                output = output + "Erscheinungsjahr:\t" + item.getRelease_date() + "\n\n";
+                output = output + "Beschreibung:\n" + item.getOverview() + "\n";
+
+                for (int j = 0; j < item.getGenre_ids().length; j++) {
+                    for (int k = 0; k < genresIds.genres.length; k++) {
+                        if (genresIds.genres[k].getId() == item.getGenre_ids()[j]) {
+                            genres = genres + genresIds.genres[k].getName() + ", ";
+                        }
+                    }
+                }
+
+            }
+        }
+         return output;
+    }
+
+    public String getMovieUrl(String title){
+        String url = "";
+        for(Movies.Results item : this.getResults()) {
+            if (item.getTitle() == title)
+                url = item.getPoster_path();
+        }
+
+        return url;
+    }
+
 }

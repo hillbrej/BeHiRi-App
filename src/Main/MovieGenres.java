@@ -1,7 +1,7 @@
 package Main;
 
 /**
- * Created by Jonas on 15.05.2017.
+ * Class Movie Genres das ist ein test
  */
 public class MovieGenres {
 
