@@ -1,7 +1,10 @@
 package Main;
 
+import java.io.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,6 +21,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Controller{
+
+    // Pfad in dem das Programm liegt (fuer Favoritenexport usw.)
+    File f = new File("");
+    String localPath = f.getAbsolutePath();
 
     public static String[] comboBoxValues;
 
@@ -61,6 +68,7 @@ public class Controller{
 
     public TextArea textAreaDetail;
     public ImageView imageViewMovie;
+    public ObservableList<String> favoriteList;
 
     @FXML
     private void initialize()
@@ -89,6 +97,9 @@ public class Controller{
         // listView mit MovieListe aus Klasse verbinden
         myListView.itemsProperty().bind(MovieDb.moviesList);
 
+        favoriteList = FXCollections.observableArrayList();
+        myListViewFav.setItems(favoriteList);
+
         imageViewStar1.setVisible(false);
         imageViewStar2.setVisible(false);
         imageViewStar3.setVisible(false);
@@ -106,6 +117,11 @@ public class Controller{
 
         deleteFavouritelistButtonFav.setVisible(false);
         toReminderlistButtonFav.setVisible(false);
+
+        // Bishergie Favoriten aus Lister importieren
+        System.out.println("Local Path: " + localPath);
+        favoriteMovies.moviesFromFile(localPath);
+        favoriteList.addAll(favoriteMovies.FavMovies2List());
     }
 
     public void setData(String... comboBoxValues)
@@ -445,4 +461,28 @@ public class Controller{
                 break;
         }
     }
+
+    public void addToFavorites()
+    {
+        try {
+            String title = myListView.getSelectionModel().getSelectedItem().toString();
+
+            for (Movies.Results item : movies.getResults()){
+                if (item.getTitle() == title){
+
+                    if(favoriteMovies.addFavorites(item)) {
+                        favoriteList.add(title);
+                        break;
+                    }
+                }
+            }
+
+            favoriteMovies.Movies2File(localPath);
+
+        }
+        catch(Exception ex){
+            System.out.println(ex);
+        }
+    }
+
 }

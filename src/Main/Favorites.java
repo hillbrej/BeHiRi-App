@@ -44,28 +44,22 @@ public class Favorites extends Movies {
             fr.close();
         }
         catch ( IOException e ) {
-            System.err.println( "Konnte Datei nicht erstellen" );
+            System.err.println( "Konnte nicht aus Dateien lesen (evtl. existiert die Datei: " + path + " nicht)." );
         }
     }
 
-    public void Movies2File(String path){
+    public void Movies2File(String path) {
         Writer fw = null;
-        try
-        {
-            fw = new FileWriter( path+"\\fileWriter.json" );
+
+        try {
+            fw = new FileWriter(path + "\\fileWriter.json");
             String data = new Gson().toJson(favorites);
-            fw.write( data );
+            fw.write(data);
             fw.close();
 
-            // fw.append( System.getProperty("line.separator") ); // e.g. "\n"
-            /*
-            FileOutputStream fileOutputStream = new FileOutputStream(path+ "Movies.data");
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(favoriteList);
-            */
         }
-        catch ( IOException e ) {
-            System.err.println( "Konnte Datei nicht erstellen" );
+        catch (IOException e) {
+                System.err.println("Konnte Datei nicht erstellen");
         }
     }
 

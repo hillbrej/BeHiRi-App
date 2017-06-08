@@ -119,7 +119,7 @@
                                           <Insets top="10.0" />
                                        </FlowPane.margin>
                                     </ImageView>
-                                    <Button fx:id="toFavouritelistButton" mnemonicParsing="false" text="Zu Favoritenliste">
+                                    <Button fx:id="toFavouritelistButton" mnemonicParsing="false" onMouseClicked="#addToFavorites" text="Zu Favoritenliste">
                                        <FlowPane.margin>
                                           <Insets left="20.0" top="10.0" />
                                        </FlowPane.margin>
