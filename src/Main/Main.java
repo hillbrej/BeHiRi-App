@@ -24,7 +24,7 @@ public class Main extends Application {
     public static void main(String[] args)
     {
         Controller myController = new Controller();
-        myController.setData("te", "ds", "da");
+        myController.setData("A bis Z", "Z bis A");
         launch(args);
         //myController.setMyListView("das", "ist");
     }

@@ -1,6 +1,14 @@
 package Main;
 
+import java.awt.image.FilteredImageSource;
 import java.io.*;
+
+import java.util.*;
+
+import com.sun.javafx.fxml.builder.JavaFXSceneBuilder;
+
+import com.sun.org.apache.xpath.internal.operations.Number;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,7 +23,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextArea;
+import javafx.scene.Node;
 
+import java.text.Collator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -66,9 +76,14 @@ public class Controller{
     public Button deleteFavouritelistButtonFav;
     public Button toReminderlistButtonFav;
 
-    public TextArea textAreaDetail;
+    // public TextArea textAreaDetail;
     public ImageView imageViewMovie;
     public ObservableList<String> favoriteList;
+    public Label labelDetail;
+    public Label labelFavDetail;
+    public SplitPane splitPaneMovies;
+    public ComboBox comboBoxYearFrom;
+    public ComboBox comboBoxYearTo;
 
     @FXML
     private void initialize()
@@ -78,13 +93,61 @@ public class Controller{
         ////
         textfieldSearch.setOnKeyTyped((event) -> searchMovies(event));
         textfieldSearch.setOnAction((event) -> searchMoviesEnter());
-        myListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+
+        // myListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        myListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFilm());
+
+        myListViewFav.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
             {
-                showFilm();
+                showFavFilm();
             }
         });
+
+        myComboboxFav.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {
+                // System.out.println(ov);
+                // System.out.println(t);
+                System.out.println("Combobox-Auswahl: " + t1);
+                if(t1!=null)
+                    sortFavSearchList(t1);
+            }
+        });
+
+
+        myCombobox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {
+                // System.out.println(ov);
+                // System.out.println(t);
+                System.out.println("Combobox-Auswahl: " + t1);
+                if(t1!=null)
+                    sortSearchList(t1);
+            }
+        });
+
+        comboBoxYearFrom.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {
+                // System.out.println(ov);
+                // System.out.println(t);
+                System.out.println("Combobox-Auswahl: " + t1);
+                filterYearFrom(t1);
+            }
+        });
+
+        comboBoxYearTo.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String t, String t1) {
+                // System.out.println(ov);
+                // System.out.println(t);
+                System.out.println("Combobox-Auswahl: " + t1);
+                filterYearTo(t1);
+            }
+        });
+
+        splitPaneMovies.setStyle("-fx-box-border: transparent;");
+        Node divider = splitPaneMovies.lookup(".split-pane-divider");
+        if(divider!=null)
+            divider.setStyle("-fx-background-color: transparent;");
 
         // Movie Objekte instanzieren
         movies = new Movies();
@@ -99,12 +162,6 @@ public class Controller{
 
         favoriteList = FXCollections.observableArrayList();
         myListViewFav.setItems(favoriteList);
-
-        imageViewStar1.setVisible(false);
-        imageViewStar2.setVisible(false);
-        imageViewStar3.setVisible(false);
-        imageViewStar4.setVisible(false);
-        imageViewStar5.setVisible(false);
 
         toFavouritelistButton.setVisible(false);
         toReminderlistButton.setVisible(false);
@@ -131,8 +188,8 @@ public class Controller{
 
     public void showFilm()
     {
-        textAreaDetail.setText(null);
-
+        // textAreaDetail.setText(null);
+        int selectedIndex = myListView.getSelectionModel().getSelectedIndex();
         String selectedMovie = myListView.getSelectionModel().getSelectedItem().toString();
         System.out.println(selectedMovie);
 
@@ -142,27 +199,36 @@ public class Controller{
         //check(myListView.getSelectionModel().getSelectedItem());
         //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
 
-        imageViewStar1.setVisible(true);
-        imageViewStar2.setVisible(true);
-        imageViewStar3.setVisible(true);
-        imageViewStar4.setVisible(true);
-        imageViewStar5.setVisible(true);
-
         toFavouritelistButton.setVisible(true);
         toReminderlistButton.setVisible(true);
 
-        String movieDetail = movies.showDetails(selectedMovie, genres);
+        String movieDetail = movies.showDetails(selectedIndex, genres);
+        // String movieDetail = movies.showDetails(selectedMovie, genres);
         String movieUrl = movies.getMovieUrl(selectedMovie);
 
-        textAreaDetail.appendText(movieDetail);
+        // textAreaDetail.appendText(movieDetail);
 
-        Image image = new Image("https://image.tmdb.org/t/p/w500/" + movieUrl);
+        Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+        imageViewMovie.setFitHeight(image.getHeight()/2.0);
+        imageViewMovie.setFitWidth(image.getWidth()/2.0);
+        // imageViewMovie.setImage(image);
+
+        // String imageUrl = JavaFXSceneBuilder.class.getResource(image.toString()).toExternalForm();
+        /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
+                "-fx-background-position: center center; " +
+                "-fx-background-repeat: stretch;");
+                */
+        // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
         imageViewMovie.setImage(image);
 
+        labelDetail.setText(movieDetail);
+        labelDetail.setMaxWidth(300);
+        // labelDetail.setMinHeight(image.getHeight());
+        // labelDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
     }
-
     public void searchMovies(KeyEvent event)
     {
+        List<String> years = new ArrayList<>();
         String search = textfieldSearch.getText();
         KeyCode code = event.getCode();
         if (code != KeyCode.SPACE)
@@ -186,6 +252,20 @@ public class Controller{
                     exeService.shutdown();
                     exeService.awaitTermination(250, TimeUnit.MILLISECONDS);
                     System.out.println("exeService: " + exeService.toString());
+
+                    // Vorhandene Jahre der Filme ermitteln und in Comboboxen schreiben
+                    comboBoxYearFrom.setValue(null);
+                    comboBoxYearTo.setValue(null);
+                    years = movieDb.getMovies().getYearsofMovies();
+                    years.sort(Comparator.naturalOrder());
+                    for(String item : years)
+                    {
+                        if(!comboBoxYearFrom.getItems().contains(item)) {
+                            comboBoxYearFrom.getItems().add(item);
+                            comboBoxYearTo.getItems().add(item);
+                        }
+                    }
+
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
                 }
@@ -220,6 +300,7 @@ public class Controller{
         myListView.getItems().addAll(films);
     }
 
+    /*
     public void changeImageStarToFull()
     {
         changeImageStarFull(1);
@@ -261,6 +342,7 @@ public class Controller{
     {
         changeImageStarEmpty(5);
     }
+    */
 
     public void changeImageStarToFullFav()
     {
@@ -304,6 +386,7 @@ public class Controller{
         changeImageStarEmptyFav(5);
     }
 
+    /*
     public void changeImageStarFull(int x)
     {
         Image myImage = new Image("SternVoll.png");
@@ -382,6 +465,7 @@ public class Controller{
                 break;
         }
     }
+    */
 
     public void changeImageStarFullFav(int x)
     {
@@ -483,6 +567,231 @@ public class Controller{
         catch(Exception ex){
             System.out.println(ex);
         }
+    }
+
+    public void delteFromFavorites()
+    {
+        try {
+            int selectedItemIndex = myListViewFav.getSelectionModel().getSelectedIndex();
+            String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
+
+            for (Movies.Results item : favoriteMovies.getFavorites()){
+                if (item.getTitle() == title){
+                    if(favoriteMovies.deleteFavorites(item)) {
+                        favoriteList.remove(selectedItemIndex);
+                        break;
+                    }
+                }
+            }
+
+            favoriteMovies.Movies2File(localPath);
+        }
+        catch(Exception ex){
+            System.out.println(ex);
+        }
+    }
+
+    public void showFavFilm()
+    {
+        int rating = -1;
+
+        int selectedIndex = myListViewFav.getSelectionModel().getSelectedIndex();
+        String selectedMovie = myListViewFav.getSelectionModel().getSelectedItem().toString();
+        System.out.println(selectedMovie);
+
+        //check(myListView.getSelectionModel().getSelectedItem());
+        //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
+
+        imageViewStarFav1.setVisible(true);
+        imageViewStarFav2.setVisible(true);
+        imageViewStarFav3.setVisible(true);
+        imageViewStarFav4.setVisible(true);
+        imageViewStarFav5.setVisible(true);
+
+        deleteFavouritelistButtonFav.setVisible(true);
+        toReminderlistButtonFav.setVisible(true);
+
+        // Erstmal die Sterne wieder ablöschen
+        changeImageStarToEmptyFav();
+        changeImageStarToEmptyFav2();
+        changeImageStarToEmptyFav3();
+        changeImageStarToEmptyFav4();
+        changeImageStarToEmptyFav5();
+
+
+        // String movieDetail = favoriteMovies.showFavDetails(selectedMovie, genres);
+        String movieDetail = favoriteMovies.showFavDetails(selectedIndex, genres);
+        String movieUrl = favoriteMovies.getFavMovieUrl(selectedMovie);
+
+        Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+
+        // String imageUrl = JavaFXSceneBuilder.class.getResource(image.toString()).toExternalForm();
+        /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
+                "-fx-background-position: center center; " +
+                "-fx-background-repeat: stretch;");
+                */
+        // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+        labelFavDetail.setText(movieDetail);
+        labelFavDetail.setMaxWidth(image.getWidth());
+        labelFavDetail.setMinHeight(image.getHeight());
+        labelFavDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+
+        rating = favoriteMovies.getFavRating(selectedMovie);
+
+        switch (rating) {
+            case 1:
+                changeImageStarToFullFav();
+                break;
+            case 2:
+                changeImageStarToFullFav();
+                changeImageStarToFullFav2();
+                break;
+            case 3:
+                changeImageStarToFullFav();
+                changeImageStarToFullFav2();
+                changeImageStarToFullFav3();
+                break;
+            case 4:
+                changeImageStarToFullFav();
+                changeImageStarToFullFav2();
+                changeImageStarToFullFav3();
+                changeImageStarToFullFav4();
+                break;
+            case 5:
+                changeImageStarToFullFav();
+                changeImageStarToFullFav2();
+                changeImageStarToFullFav3();
+                changeImageStarToFullFav4();
+                changeImageStarToFullFav5();
+                break;
+            default:
+        }
+
+    }
+
+    public void changeImageStarToRating(int rating)
+    {
+        try {
+            String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
+
+            for (Movies.Results item : favoriteMovies.getFavorites()){
+                if (item.getTitle() == title){
+                    item.setRating(rating);
+                }
+            }
+
+            favoriteMovies.Movies2File(localPath);
+        }
+        catch(Exception ex){
+            System.out.println(ex);
+        }
+    }
+    public void changeImageStarToRatingOne()
+    {
+        changeImageStarToRating(1);
+        changeImageStarToFullFav();
+    }
+    public void changeImageStarToRatingTwo()
+    {
+        changeImageStarToRating(2);
+        changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+    }
+    public void changeImageStarToRatingThree()
+    {
+        changeImageStarToRating(3);
+        changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+        changeImageStarToFullFav3();
+    }
+    public void changeImageStarToRatingFour()
+    {
+        changeImageStarToRating(4);
+        changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+        changeImageStarToFullFav3();
+        changeImageStarToFullFav4();
+    }
+    public void changeImageStarToRatingFive()
+    {
+        changeImageStarToRating(5);
+        changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+        changeImageStarToFullFav3();
+        changeImageStarToFullFav4();
+        changeImageStarToFullFav5();
+    }
+
+    public void sortFavSearchList(String selection)
+    {
+        if(selection == "A bis Z")
+            myListViewFav.getItems().sort(Comparator.naturalOrder());
+            // java.util.Collections.sort(myListViewFav.getItems(), Collator.getInstance(Locale.GERMAN));
+        else
+            myListViewFav.getItems().sort(Comparator.reverseOrder());
+            // java.util.Collections.reverse(myListViewFav.getItems());
+    }
+
+    public void sortSearchList(String selection)
+    {
+        if(selection == "A bis Z")
+            myListView.getItems().sort(Comparator.naturalOrder());
+            // java.util.Collections.sort(myListView.getItems(), Collator.getInstance(Locale.GERMAN));
+        else
+            myListView.getItems().sort(Comparator.reverseOrder());
+            // java.util.Collections.reverse(myListView.getItems());
+    }
+
+    public void filterYearFrom(String yearFrom)
+    {
+        movies = movieDb.getMovies();
+        List<String> filteredList = new ArrayList<>();
+        int yearFromInt = Integer.parseInt(yearFrom);
+        String tempString = "";
+        int tempInt = 0;
+
+        System.out.println("YearFrom: " + yearFrom);
+        for(Movies.Results item : movies.getResults())
+        {
+            tempString = item.getRelease_date();
+            tempString = tempString.substring(0,tempString.indexOf("-"));
+            tempInt = Integer.parseInt(tempString);
+
+            if(tempInt >= yearFromInt)
+                filteredList.add(item.getTitle());
+        }
+
+        HashMap<Integer,String> hashm = new HashMap<Integer, String>();
+        hashm.put(5,"bla");
+
+
+        myListView.getItems().setAll(filteredList);
+        myListView.getItems().setAll(hashm.keySet());
+
+    }
+
+    public void filterYearTo(String yearTo)
+    {
+        System.out.println("YearFrom: " + yearTo);
+
+        movies = movieDb.getMovies();
+        List<String> filteredList = new ArrayList<>();
+        int yearToInt = Integer.parseInt(yearTo);
+        String tempString = "";
+        int tempInt = 0;
+
+        System.out.println("YearFrom: " + yearTo);
+        for(Movies.Results item : movies.getResults())
+        {
+            tempString = item.getRelease_date();
+            tempString = tempString.substring(0,tempString.indexOf("-"));
+            tempInt = Integer.parseInt(tempString);
+
+            if(tempInt <= yearToInt)
+                filteredList.add(item.getTitle());
+        }
+
+            myListView.getItems().setAll(filteredList);
     }
 
 }

@@ -84,4 +84,96 @@ public class Favorites extends Movies {
         }
     }
 
+    public boolean deleteFavorites(Results element){
+        if(favoriteIds.contains(element.getId())) {
+            int index = this.favoriteIds.indexOf(element.getId());
+            System.out.println("ID: " + element.getId());
+            this.favoriteIds.remove(index);
+            this.favorites.remove(element);
+            return true;
+        }
+        else {
+            System.out.println("Film nicht in Favoriten enthalten");
+            return false;
+        }
+    }
+
+    public String showFavDetails(String title, MovieGenres genresIds){
+        String output = "";
+        String genres = "";
+        System.out.println("Film Titel: " + title);
+
+        for(Movies.Results item : favorites) {
+            if (item.getTitle() == title) {
+                output = "Titel:\t\t\t\t" + title + "\n\n";
+                output = output + "Originaltitel:\t\t" + item.getOriginal_title() + "\n";
+                output = output + "Erscheinungsjahr:\t" + item.getRelease_date() + "\n";
+
+                // Genres abfragen
+                for (int j = 0; j < item.getGenre_ids().length; j++) {
+                    for (int k = 0; k < genresIds.genres.length; k++) {
+                        if (genresIds.genres[k].getId() == item.getGenre_ids()[j]) {
+                            genres = genres + genresIds.genres[k].getName() + ", ";
+                            break;
+                        }
+                    }
+                }
+
+                output = output + "Genres:\t\t\t" + genres + "\n\n";
+                output = output + "Beschreibung:\n" + item.getOverview() + "\n";
+
+            }
+        }
+        return output;
+    }
+
+    public String getFavMovieUrl(String title){
+        String url = "";
+        for(Movies.Results item : favorites) {
+            if (item.getTitle() == title)
+                url = item.getPoster_path();
+        }
+
+        return url;
+    }
+
+    public int getFavRating(String title)
+    {
+        int rating = -1;
+        for(Movies.Results item : this.favorites) {
+            if (item.getTitle() == title)
+                rating = item.getRating();
+        }
+
+        return rating;
+    }
+
+    public String showFavDetails(int index, MovieGenres genresIds){
+        String output = "";
+        String genres = "";
+
+        if (index < favorites.size() && favorites != null) {
+            output = "Titel:\t\t\t\t" + favorites.get(index).getTitle() + "\n\n";
+            output = output + "Originaltitel:\t\t" + favorites.get(index).getOriginal_title() + "\n";
+            output = output + "Erscheinungsjahr:\t" + favorites.get(index).getRelease_date() + "\n";
+
+            // Genres abfragen
+            for (int j = 0; j < favorites.get(index).getGenre_ids().length; j++) {
+                for (int k = 0; k < genresIds.genres.length; k++) {
+                    if (genresIds.genres[k].getId() == favorites.get(index).getGenre_ids()[j]) {
+                        genres = genres + genresIds.genres[k].getName() + ", ";
+                        break;
+                    }
+                }
+            }
+
+                output = output + "Genres:\t\t\t" + genres + "\n\n";
+                output = output + "Beschreibung:\n" + favorites.get(index).getOverview() + "\n";
+
+            }
+
+        return output;
+    }
+
+
 }

@@ -27,6 +27,7 @@ public class Movies {
         private int vote_count;
         private boolean video;
         private double vote_average;
+        private int rating;
 
         // GETTER-Methoden für Movies Klasse
         public int getId() {
@@ -85,6 +86,14 @@ public class Movies {
             return vote_average;
         }
 
+        public int getRating() {
+            return rating;
+        }
+
+        public void setRating(int rating) {
+            this.rating = rating;
+        }
+
         // Overrides fuer toString-Methode
         @Override
         public String toString() {
@@ -117,11 +126,11 @@ public class Movies {
 
         for(Movies.Results item : this.getResults()) {
             if (item.getTitle() == title) {
-                output = "Titel:\t\t\t\t" + title + "\n";
+                output = "Titel:\t\t\t\t" + title + "\n\n";
                 output = output + "Originaltitel:\t\t" + item.getOriginal_title() + "\n";
-                output = output + "Erscheinungsjahr:\t" + item.getRelease_date() + "\n\n";
-                output = output + "Beschreibung:\n" + item.getOverview() + "\n";
+                output = output + "Erscheinungsjahr:\t" + item.getRelease_date() + "\n";
 
+                // Genres abfragen
                 for (int j = 0; j < item.getGenre_ids().length; j++) {
                     for (int k = 0; k < genresIds.genres.length; k++) {
                         if (genresIds.genres[k].getId() == item.getGenre_ids()[j]) {
@@ -130,10 +139,40 @@ public class Movies {
                     }
                 }
 
+            output = output + "Genres:\t\t\t" + genres + "\n\n";
+            output = output + "Beschreibung:\n" + item.getOverview() + "\n";
+
             }
         }
-         return output;
+        return output;
     }
+
+    public String showDetails(int index, MovieGenres genresIds){
+        String output = "";
+        String genres = "";
+
+        if (index < results.size() && results != null) {
+            output = "Titel:\t\t\t\t" + results.get(index) + "\n\n";
+            output = output + "Originaltitel:\t\t" + results.get(index).getOriginal_title() + "\n";
+            output = output + "Erscheinungsjahr:\t" + results.get(index).getRelease_date() + "\n";
+
+            // Genres abfragen
+            for (int j = 0; j < results.get(index).getGenre_ids().length; j++) {
+                for (int k = 0; k < genresIds.genres.length; k++) {
+                    if (genresIds.genres[k].getId() == results.get(index).getGenre_ids()[j]) {
+                        genres = genres + genresIds.genres[k].getName() + ", ";
+                    }
+                }
+            }
+
+            output = output + "Genres:\t\t\t" + genres + "\n\n";
+            output = output + "Beschreibung:\n" + results.get(index).getOverview() + "\n";
+
+            }
+
+        return output;
+    }
+
 
     public String getMovieUrl(String title){
         String url = "";
@@ -143,6 +182,23 @@ public class Movies {
         }
 
         return url;
+    }
+
+    public List<String> getYearsofMovies()
+    {
+        List<String> listYears = new ArrayList<>();
+        String tempString;
+
+        for(Results item : results)
+        {
+            tempString = item.getRelease_date();
+            tempString = tempString.substring(0,tempString.indexOf("-"));
+            listYears.add(tempString);
+        }
+
+        return listYears;
+
+
     }
 
 }
