@@ -7,6 +7,8 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -17,7 +19,8 @@ import java.net.URL;
 // Klasse MovieDb fuer den API-Zugriff auf themoviedb.org
 public class MovieDb implements Runnable {
     public static int counter = 0;
-    public static ListProperty<String> moviesList = new SimpleListProperty<>();
+    // public static ListProperty<String> moviesList = new SimpleListProperty<>();
+    public static ListProperty<Movies.Results> moviesList = new SimpleListProperty<>();
 
     private String host = "";
     private String pathMovieSearch = "";
@@ -185,8 +188,11 @@ public class MovieDb implements Runnable {
     @Override
     public void run() {
         this.movies = ApiQueryMovies(this.searchString);
-        ObservableList<String> obsMovieList = FXCollections.observableArrayList(this.movies.Movies2List());
+        // ObservableList<String> obsMovieList = FXCollections.observableArrayList(this.movies.Movies2List());
+        ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(this.movies.getResults());
         Platform.runLater(() -> moviesList.setValue(obsMovieList));
+
+        // Platform.runLater(() -> moviesList.setValue(obsMovieList));
     }
 
 }

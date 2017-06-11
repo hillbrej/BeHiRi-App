@@ -81,7 +81,6 @@ public class Controller{
     public ObservableList<String> favoriteList;
     public Label labelDetail;
     public Label labelFavDetail;
-    public SplitPane splitPaneMovies;
     public ComboBox comboBoxYearFrom;
     public ComboBox comboBoxYearTo;
 
@@ -96,14 +95,16 @@ public class Controller{
 
         // myListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
         myListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFilm());
+        myListViewFav.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFavFilm());
 
+        /*
         myListViewFav.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
             {
                 showFavFilm();
             }
-        });
+        });*/
 
         myComboboxFav.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String t, String t1) {
@@ -144,11 +145,6 @@ public class Controller{
             }
         });
 
-        splitPaneMovies.setStyle("-fx-box-border: transparent;");
-        Node divider = splitPaneMovies.lookup(".split-pane-divider");
-        if(divider!=null)
-            divider.setStyle("-fx-background-color: transparent;");
-
         // Movie Objekte instanzieren
         movies = new Movies();
         favoriteMovies = new Favorites();
@@ -162,6 +158,7 @@ public class Controller{
 
         favoriteList = FXCollections.observableArrayList();
         myListViewFav.setItems(favoriteList);
+        myListViewFav.itemsProperty().bind(Favorites.favList);
 
         toFavouritelistButton.setVisible(false);
         toReminderlistButton.setVisible(false);
@@ -188,13 +185,14 @@ public class Controller{
 
     public void showFilm()
     {
-        // textAreaDetail.setText(null);
-        int selectedIndex = myListView.getSelectionModel().getSelectedIndex();
-        String selectedMovie = myListView.getSelectionModel().getSelectedItem().toString();
-        System.out.println(selectedMovie);
+        String selectedTitle = myListView.getSelectionModel().getSelectedItem().toString();
+        System.out.println("Ausgewaehlter Film: " + selectedTitle);
+
+        Object selectedObj = myListView.getSelectionModel().getSelectedItem();
+        Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
         // Referenz auf Movie Liste holen
-        movies = movieDb.getMovies();
+        // movies = movieDb.getMovies();
 
         //check(myListView.getSelectionModel().getSelectedItem());
         //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
@@ -202,7 +200,8 @@ public class Controller{
         toFavouritelistButton.setVisible(true);
         toReminderlistButton.setVisible(true);
 
-        String movieDetail = movies.showDetails(selectedIndex, genres);
+        // String movieDetail = movies.showDetails(selectedIndex, genres);
+        String movieDetail = movies.showDetails(selectedMovie, genres);
         // String movieDetail = movies.showDetails(selectedMovie, genres);
         String movieUrl = movies.getMovieUrl(selectedMovie);
 
@@ -220,7 +219,8 @@ public class Controller{
                 */
         // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
         imageViewMovie.setImage(image);
-
+        imageViewMovie.setX(10);
+        imageViewMovie.setY(10);
         labelDetail.setText(movieDetail);
         labelDetail.setMaxWidth(300);
         // labelDetail.setMinHeight(image.getHeight());
@@ -550,17 +550,15 @@ public class Controller{
     {
         try {
             String title = myListView.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Film " + title + " wird den Favoriten hinzugefuegt");
 
-            for (Movies.Results item : movies.getResults()){
-                if (item.getTitle() == title){
+            Object selectedObj = myListView.getSelectionModel().getSelectedItem();
+            Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-                    if(favoriteMovies.addFavorites(item)) {
-                        favoriteList.add(title);
-                        break;
-                    }
-                }
-            }
+            if (selectedMovie != null)
+                favoriteMovies.getFavorites().add(selectedMovie);
 
+            favoriteMovies.addFavorites(selectedMovie);
             favoriteMovies.Movies2File(localPath);
 
         }
@@ -574,14 +572,16 @@ public class Controller{
         try {
             int selectedItemIndex = myListViewFav.getSelectionModel().getSelectedIndex();
             String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Film " + title + " wird aus den Favoriten geloescht");
 
-            for (Movies.Results item : favoriteMovies.getFavorites()){
-                if (item.getTitle() == title){
-                    if(favoriteMovies.deleteFavorites(item)) {
-                        favoriteList.remove(selectedItemIndex);
-                        break;
-                    }
-                }
+            Object selectedObj = myListViewFav.getSelectionModel().getSelectedItem();
+            Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+
+            if (selectedMovie != null) {
+                // favoriteMovies.getFavorites().remove(selectedMovie);
+                // favoriteMovies.favList.remove(selectedMovie);
+                myListViewFav.getSelectionModel().select(0);
+                favoriteMovies.deleteFavorites(selectedMovie);
             }
 
             favoriteMovies.Movies2File(localPath);
@@ -595,12 +595,6 @@ public class Controller{
     {
         int rating = -1;
 
-        int selectedIndex = myListViewFav.getSelectionModel().getSelectedIndex();
-        String selectedMovie = myListViewFav.getSelectionModel().getSelectedItem().toString();
-        System.out.println(selectedMovie);
-
-        //check(myListView.getSelectionModel().getSelectedItem());
-        //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
 
         imageViewStarFav1.setVisible(true);
         imageViewStarFav2.setVisible(true);
@@ -611,6 +605,7 @@ public class Controller{
         deleteFavouritelistButtonFav.setVisible(true);
         toReminderlistButtonFav.setVisible(true);
 
+
         // Erstmal die Sterne wieder ablöschen
         changeImageStarToEmptyFav();
         changeImageStarToEmptyFav2();
@@ -618,6 +613,56 @@ public class Controller{
         changeImageStarToEmptyFav4();
         changeImageStarToEmptyFav5();
 
+
+        String selectedTitle = myListViewFav.getSelectionModel().getSelectedItem().toString();
+        System.out.println("Ausgewaehlter Film: " + selectedTitle);
+
+        Object selectedObj = myListViewFav.getSelectionModel().getSelectedItem();
+        Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+
+        deleteFavouritelistButtonFav.setVisible(true);
+        toReminderlistButtonFav.setVisible(true);
+
+
+        // String movieDetail = movies.showDetails(selectedIndex, genres);
+        String movieDetail = favoriteMovies.showDetails(selectedMovie, genres);
+        // String movieDetail = movies.showDetails(selectedMovie, genres);
+        String movieUrl = favoriteMovies.getMovieUrl(selectedMovie);
+
+        Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+        imageViewMovie.setFitHeight(image.getHeight()/2.0);
+        imageViewMovie.setFitWidth(image.getWidth()/2.0);
+        // imageViewMovie.setImage(image);
+
+        // String imageUrl = JavaFXSceneBuilder.class.getResource(image.toString()).toExternalForm();
+        /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
+                "-fx-background-position: center center; " +
+                "-fx-background-repeat: stretch;");
+                */
+
+        // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+
+
+        labelFavDetail.setText(movieDetail);
+        labelFavDetail.setMaxWidth(image.getWidth());
+        labelFavDetail.setMinHeight(image.getHeight());
+        labelFavDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+
+
+       /*
+        imageViewMovie.setImage(image);
+        imageViewMovie.setX(10);
+        imageViewMovie.setY(10);
+        labelDetail.setText(movieDetail);
+        labelDetail.setMaxWidth(300);
+        /*
+
+        int selectedIndex = myListViewFav.getSelectionModel().getSelectedIndex();
+        String selectedMovie = myListViewFav.getSelectionModel().getSelectedItem().toString();
+        System.out.println(selectedMovie);
+
+        //check(myListView.getSelectionModel().getSelectedItem());
+        //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
 
         // String movieDetail = favoriteMovies.showFavDetails(selectedMovie, genres);
         String movieDetail = favoriteMovies.showFavDetails(selectedIndex, genres);
@@ -629,12 +674,13 @@ public class Controller{
         /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
                 "-fx-background-position: center center; " +
                 "-fx-background-repeat: stretch;");
-                */
+
         // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
         labelFavDetail.setText(movieDetail);
         labelFavDetail.setMaxWidth(image.getWidth());
         labelFavDetail.setMinHeight(image.getHeight());
         labelFavDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+        */
 
         rating = favoriteMovies.getFavRating(selectedMovie);
 

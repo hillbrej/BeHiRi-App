@@ -52,9 +52,9 @@
                                     <Insets left="20.0" top="5.0" />
                                  </FlowPane.margin>
                               </Label>
-                              <ScrollPane prefHeight="229.0" prefWidth="166.0">
+                              <ScrollPane prefHeight="228.0" prefWidth="167.0">
                                  <content>
-                                    <ListView fx:id="myListView" prefHeight="227.0" prefWidth="164.0" />
+                                    <ListView fx:id="myListView" prefHeight="223.0" prefWidth="162.0" />
                                  </content>
                                  <FlowPane.margin>
                                     <Insets left="5.0" />
@@ -66,24 +66,23 @@
                   </ScrollPane>
                   <SplitPane dividerPositions="0.7277628032345014" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
                     <items>
-                        <ScrollPane prefHeight="362.0" prefWidth="602.0">
+                        <ScrollPane maxWidth="600.0" prefHeight="362.0" prefWidth="602.0">
                            <content>
-                              <FlowPane prefHeight="370.0" prefWidth="601.0">
+                              <FlowPane maxWidth="600.0" prefHeight="370.0" prefWidth="600.0">
                                  <children>
-                                    <SplitPane fx:id="splitPaneMovies" dividerPositions="0.22641509433962265" prefHeight="200.0" prefWidth="585.0">
-                                       <items>
-                                          <ImageView fx:id="imageViewMovie" fitHeight="134.0" fitWidth="159.0" pickOnBounds="true" preserveRatio="true" />
-                                          <ScrollPane>
-                                             <content>
-                                                <Label fx:id="labelDetail" alignment="TOP_LEFT" focusTraversable="false" minWidth="400.0" text="Label fuer Details" wrapText="true">
-                                                   <font>
-                                                      <Font size="16.0" />
-                                                   </font>
-                                                </Label>
-                                             </content>
-                                          </ScrollPane>
-                                       </items>
-                                    </SplitPane>
+                                    <ImageView fx:id="imageViewMovie" fitHeight="134.0" fitWidth="159.0" pickOnBounds="true" preserveRatio="true">
+                                       <FlowPane.margin>
+                                          <Insets left="10.0" right="10.0" top="10.0" />
+                                       </FlowPane.margin>
+                                    </ImageView>
+                                    <Label fx:id="labelDetail" alignment="TOP_LEFT" focusTraversable="false" text="Label fuer Details" wrapText="true">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                       <FlowPane.margin>
+                                          <Insets left="10.0" top="10.0" />
+                                       </FlowPane.margin>
+                                    </Label>
                                  </children></FlowPane>
                            </content>
                         </ScrollPane>

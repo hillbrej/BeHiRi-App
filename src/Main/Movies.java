@@ -97,7 +97,7 @@ public class Movies {
         // Overrides fuer toString-Methode
         @Override
         public String toString() {
-            return original_title;
+            return title;
         }
     }
 
@@ -110,21 +110,21 @@ public class Movies {
         this.results = results;
     }
 
-    public List<String> Movies2List(){
+    public List<String> Movies2List() {
         List<String> movies = new ArrayList<String>();
 
-        for(Results item : results)
+        for (Results item : results)
             movies.add(item.getTitle());
 
         return movies;
     }
 
-    public String showDetails(String title, MovieGenres genresIds){
+    public String showDetails(String title, MovieGenres genresIds) {
         String output = "";
         String genres = "";
         System.out.println("Film Titel: " + title);
 
-        for(Movies.Results item : this.getResults()) {
+        for (Movies.Results item : this.getResults()) {
             if (item.getTitle() == title) {
                 output = "Titel:\t\t\t\t" + title + "\n\n";
                 output = output + "Originaltitel:\t\t" + item.getOriginal_title() + "\n";
@@ -139,15 +139,15 @@ public class Movies {
                     }
                 }
 
-            output = output + "Genres:\t\t\t" + genres + "\n\n";
-            output = output + "Beschreibung:\n" + item.getOverview() + "\n";
+                output = output + "Genres:\t\t\t" + genres + "\n\n";
+                output = output + "Beschreibung:\n" + item.getOverview() + "\n";
 
             }
         }
         return output;
     }
 
-    public String showDetails(int index, MovieGenres genresIds){
+    public String showDetails(int index, MovieGenres genresIds) {
         String output = "";
         String genres = "";
 
@@ -168,37 +168,77 @@ public class Movies {
             output = output + "Genres:\t\t\t" + genres + "\n\n";
             output = output + "Beschreibung:\n" + results.get(index).getOverview() + "\n";
 
-            }
+        }
 
         return output;
     }
 
+    public String showDetails(Results movie, MovieGenres genresIds) {
+        String output = "";
+        String genres = "";
 
-    public String getMovieUrl(String title){
-        String url = "";
-        for(Movies.Results item : this.getResults()) {
-            if (item.getTitle() == title)
-                url = item.getPoster_path();
+        if (movie != null) {
+            output = "Titel:\t\t\t\t" + movie.getTitle() + "\n\n";
+            output = output + "Originaltitel:\t\t" + movie.getOriginal_title() + "\n";
+            output = output + "Erscheinungsjahr:\t" + movie.getRelease_date() + "\n";
+
+            // Genres abfragen
+            for (int j = 0; j < movie.getGenre_ids().length; j++) {
+                for (int k = 0; k < genresIds.genres.length; k++) {
+                    if (genresIds.genres[k].getId() == movie.getGenre_ids()[j]) {
+                        genres = genres + genresIds.genres[k].getName() + ", ";
+                    }
+                }
+            }
+
+            output = output + "Genres:\t\t\t" + genres + "\n\n";
+            output = output + "Beschreibung:\n" + movie.getOverview() + "\n";
+
         }
+
+        return output;
+    }
+
+    public String getMovieUrl(Results movie) {
+        String url = "";
+
+        if (movie != null)
+            url = movie.getPoster_path();
 
         return url;
     }
 
-    public List<String> getYearsofMovies()
-    {
+    public List<String> getYearsofMovies() {
         List<String> listYears = new ArrayList<>();
         String tempString;
 
-        for(Results item : results)
-        {
+        for (Results item : results) {
             tempString = item.getRelease_date();
-            tempString = tempString.substring(0,tempString.indexOf("-"));
+            tempString = tempString.substring(0, tempString.indexOf("-"));
             listYears.add(tempString);
         }
 
         return listYears;
 
+    }
 
+    public int getFavRating(Results movie)
+    {
+            int rating = -1;
+
+            if(movie != null)
+                rating = movie.getRating();
+
+            return rating;
+    }
+
+    @Override
+    public String toString() {
+        String tempString = "";
+        for (Results item : this.getResults())
+            tempString = item.getTitle();
+
+        return tempString;
     }
 
 }

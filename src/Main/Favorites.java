@@ -1,6 +1,10 @@
 package Main;
 
 import com.google.gson.Gson;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,6 +16,7 @@ import java.util.List;
  */
 public class Favorites extends Movies {
 
+    public static ListProperty<Results> favList = new SimpleListProperty<>();
     private List<Results> favorites = new ArrayList<>();
     private List<Integer> favoriteIds = new ArrayList<>();
 
@@ -24,27 +29,28 @@ public class Favorites extends Movies {
         this.favorites = favorites;
     }
 
-    public void moviesFromFile(String path){
+    public void moviesFromFile(String path) {
         Reader fr = null;
         Results[] favoritesArray = new Results[]{};
 
-        try
-        {
-            fr = new FileReader( path+"\\fileWriter.json" );
+        try {
+            fr = new FileReader(path + "\\fileWriter.json");
 
             Reader reader = fr;
 
             favoritesArray = new Gson().fromJson(fr, Favorites.Results[].class);
-            if(favoritesArray != null) {
+            if (favoritesArray != null) {
                 favorites.addAll(Arrays.asList(favoritesArray));
-                for(Results item : favorites)
+                ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(this.favorites);
+                favList.setValue(obsMovieList);
+
+                for (Results item : favorites)
                     favoriteIds.add(item.getId());
             }
 
             fr.close();
-        }
-        catch ( IOException e ) {
-            System.err.println( "Konnte nicht aus Dateien lesen (evtl. existiert die Datei: " + path + " nicht)." );
+        } catch (IOException e) {
+            System.err.println("Konnte nicht aus Dateien lesen (evtl. existiert die Datei: " + path + " nicht).");
         }
     }
 
@@ -57,9 +63,8 @@ public class Favorites extends Movies {
             fw.write(data);
             fw.close();
 
-        }
-        catch (IOException e) {
-                System.err.println("Konnte Datei nicht erstellen");
+        } catch (IOException e) {
+            System.err.println("Konnte Datei nicht erstellen");
         }
     }
 
@@ -72,7 +77,7 @@ public class Favorites extends Movies {
         return movies;
     }
 
-    public boolean addFavorites(Results element){
+    /* public boolean addFavorites(Results element){
         if(!favoriteIds.contains(element.getId())) {
             this.favorites.add(element);
             this.favoriteIds.add(element.getId());
@@ -82,18 +87,29 @@ public class Favorites extends Movies {
             System.out.println("Film schon in Favoriten enthalten");
             return false;
         }
+    }*/
+
+    public boolean addFavorites(Results element) {
+        if (element != null) {
+            ObservableList<Results> obsMovieList = FXCollections.observableArrayList(this.favorites);
+            favList.setValue(obsMovieList);
+            return true;
+        } else {
+            System.out.println("Film schon in Favoriten enthalten");
+            return false;
+        }
     }
 
     public boolean deleteFavorites(Results element){
-        if(favoriteIds.contains(element.getId())) {
-            int index = this.favoriteIds.indexOf(element.getId());
-            System.out.println("ID: " + element.getId());
-            this.favoriteIds.remove(index);
+        if(element != null) {
+            // this.favList.remove(element);
             this.favorites.remove(element);
+            ObservableList<Results> obsMovieList = FXCollections.observableArrayList(this.favorites);
+            favList.setValue(obsMovieList);
             return true;
         }
         else {
-            System.out.println("Film nicht in Favoriten enthalten");
+            System.out.println("Film konnte nicht aus Favoriten geloescht werden");
             return false;
         }
     }
