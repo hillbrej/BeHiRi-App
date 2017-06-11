@@ -778,14 +778,13 @@ public class Controller{
             // java.util.Collections.reverse(myListViewFav.getItems());
     }
 
-    public void sortSearchList(String selection)
-    {
-        if(selection == "A bis Z")
-            myListView.getItems().sort(Comparator.naturalOrder());
-            // java.util.Collections.sort(myListView.getItems(), Collator.getInstance(Locale.GERMAN));
+    public void sortSearchList(String selection) {
+        movies = movieDb.getMovies();
+
+        if (selection == "A bis Z")
+            movieDb.moviesList.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
         else
-            myListView.getItems().sort(Comparator.reverseOrder());
-            // java.util.Collections.reverse(myListView.getItems());
+            movieDb.moviesList.sort((o1, o2) -> o2.getTitle().compareTo(o1.getTitle()));
     }
 
     public void filterYearFrom(String yearFrom)
