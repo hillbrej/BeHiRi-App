@@ -188,7 +188,7 @@ public class Movies {
 
         if (movie != null) {
             if(movie.getTitle() != null && movie.getTitle().length() > 0)
-                output = "Titel:\t\t\t\t" + movie.getTitle() + "\n\n";
+                output = "Titel:\t\t\t" + movie.getTitle() + "\n\n";
 
             if(movie.getOriginal_title() != null && movie.getOriginal_title().length() > 0)
                 output = output + "Originaltitel:\t\t" + movie.getOriginal_title() + "\n";
@@ -201,6 +201,7 @@ public class Movies {
                 for (int k = 0; k < genresIds.genres.length; k++) {
                     if (genresIds.genres[k].getId() == movie.getGenre_ids()[j]) {
                         genres = genres + genresIds.genres[k].getName() + ", ";
+                        break;
                     }
                 }
             }

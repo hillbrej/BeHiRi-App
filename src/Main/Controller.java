@@ -25,6 +25,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 
 import java.text.Collator;
 import java.util.concurrent.ExecutorService;
@@ -88,6 +89,7 @@ public class Controller {
     public Label labelFavDetail;
     public ComboBox comboBoxYearFrom;
     public ComboBox comboBoxYearTo;
+    public Pane paneFavBackground;
 
     @FXML
     private void initialize() {
@@ -173,6 +175,16 @@ public class Controller {
         deleteFavouritelistButtonFav.setVisible(false);
         toReminderlistButtonFav.setVisible(false);
 
+        // Logos anzeigen
+        paneFavBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
+        paneFavBackground.setPrefWidth(312);
+        paneFavBackground.setPrefHeight(276);
+        paneFavBackground.setMinHeight(276);
+        paneFavBackground.setMinWidth(312);
+
+        Image imageStart = new Image("movieDbLogo.png");
+        imageViewMovie.setImage(imageStart);
+
         // Bishergie Favoriten aus Lister importieren
         System.out.println("Local Path: " + localPath);
         favoriteMovies.moviesFromFile(localPath);
@@ -199,17 +211,22 @@ public class Controller {
                 String movieDetail = movies.showDetails(selectedMovie, genres);
                 String movieUrl = movies.getMovieUrl(selectedMovie);
 
+                Image image;
 
                 if(movieUrl != null && movieUrl.length() > 0)
                 {
-                    Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
-                    imageViewMovie.setFitHeight(image.getHeight() / 2.0);
-                    imageViewMovie.setFitWidth(image.getWidth() / 2.0);
-                    imageViewMovie.setImage(image);
-                    imageViewMovie.setX(10);
-                    imageViewMovie.setY(10);
+                    image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+                }
+                else
+                {
+                    image = new Image("movieDbLogo.png");
                 }
 
+                imageViewMovie.setFitHeight(image.getHeight() / 2.0);
+                imageViewMovie.setFitWidth(image.getWidth() / 2.0);
+                imageViewMovie.setImage(image);
+                imageViewMovie.setX(10);
+                imageViewMovie.setY(10);
                 labelDetail.setText(movieDetail);
                 labelDetail.setMaxWidth(300);
 
@@ -592,7 +609,6 @@ public class Controller {
             }
     }
 
-
     public void showFavFilm() {
         int rating = -1;
 
@@ -632,14 +648,28 @@ public class Controller {
                 if(movieUrl != null && movieUrl.length() > 0)
                 {
                     Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
-                    imageViewMovie.setFitHeight(image.getHeight() / 2.0);
-                    imageViewMovie.setFitWidth(image.getWidth() / 2.0);
+
+                    paneFavBackground.setPrefHeight(image.getHeight() / 1.0);
+                    paneFavBackground.setPrefWidth(image.getWidth() / 1.0);
+
                     labelFavDetail.setMaxWidth(image.getWidth());
+                    labelFavDetail.setMinWidth(image.getWidth());
                     labelFavDetail.setMinHeight(image.getHeight());
+                    labelFavDetail.setMaxHeight(image.getHeight());
+
+                    paneFavBackground.setStyle("-fx-background-image: " + "url(https://image.tmdb.org/t/p/w500" + movieUrl + ");");
+                }
+                else
+                {
+                    paneFavBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
+                    paneFavBackground.setPrefWidth(312);
+                    paneFavBackground.setPrefHeight(276);
+                    paneFavBackground.setMinHeight(276);
+                    paneFavBackground.setMinWidth(312);
                 }
 
                 labelFavDetail.setText(movieDetail);
-                labelFavDetail.setStyle("-fx-background-image: " + "url(https://image.tmdb.org/t/p/w500" + movieUrl + ");");
+                labelFavDetail.setStyle("-fx-background-color: rgba(211, 211, 211, 0.6);");
 
                 // Rating (Sterne) der Filme anzeigen
                 rating = favoriteMovies.getFavRating(selectedMovie);
