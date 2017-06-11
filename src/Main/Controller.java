@@ -190,6 +190,9 @@ public class Controller {
             String selectedTitle = myListView.getSelectionModel().getSelectedItem().toString();
             System.out.println("Ausgewaehlter Film: " + selectedTitle);
 
+            imageViewMovie.setImage(null);
+            labelDetail.setText(null);
+
             try {
                 Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
@@ -599,6 +602,7 @@ public class Controller {
             String selectedTitle = myListViewFav.getSelectionModel().getSelectedItem().toString();
             System.out.println("Ausgewaehlter Film: " + selectedTitle);
 
+            labelFavDetail.setText(null);
 
             imageViewStarFav1.setVisible(true);
             imageViewStarFav2.setVisible(true);
