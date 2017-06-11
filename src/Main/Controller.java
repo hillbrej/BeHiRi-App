@@ -13,6 +13,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,8 +30,9 @@ import java.text.Collator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
-public class Controller{
+public class Controller {
 
     // Pfad in dem das Programm liegt (fuer Favoritenexport usw.)
     File f = new File("");
@@ -49,6 +51,9 @@ public class Controller{
 
     // Objekt für die Favoriten erzeugen
     Favorites favoriteMovies;
+
+    // Filter fuer Suchliste
+    // FilteredList<Movies.Results> filteredMovies;
 
     // Thread erzeugen
     ExecutorService exeService;
@@ -85,8 +90,7 @@ public class Controller{
     public ComboBox comboBoxYearTo;
 
     @FXML
-    private void initialize()
-    {
+    private void initialize() {
         myCombobox.getItems().addAll(comboBoxValues);
         myComboboxFav.getItems().addAll(comboBoxValues);
         ////
@@ -97,51 +101,45 @@ public class Controller{
         myListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFilm());
         myListViewFav.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFavFilm());
 
-        /*
-        myListViewFav.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
-            {
-                showFavFilm();
-            }
-        });*/
-
         myComboboxFav.valueProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue ov, String t, String t1) {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
                 // System.out.println(ov);
                 // System.out.println(t);
                 System.out.println("Combobox-Auswahl: " + t1);
-                if(t1!=null)
+                if (t1 != null)
                     sortFavSearchList(t1);
             }
         });
 
-
         myCombobox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue ov, String t, String t1) {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
                 // System.out.println(ov);
                 // System.out.println(t);
                 System.out.println("Combobox-Auswahl: " + t1);
-                if(t1!=null)
+                if (t1 != null)
                     sortSearchList(t1);
             }
         });
 
-        comboBoxYearFrom.valueProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue ov, String t, String t1) {
+        comboBoxYearTo.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
                 // System.out.println(ov);
                 // System.out.println(t);
                 System.out.println("Combobox-Auswahl: " + t1);
-                filterYearFrom(t1);
+                filterYears();
             }
         });
 
-        comboBoxYearTo.valueProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue ov, String t, String t1) {
+        comboBoxYearFrom.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
                 // System.out.println(ov);
                 // System.out.println(t);
                 System.out.println("Combobox-Auswahl: " + t1);
-                filterYearTo(t1);
+                filterYears();
             }
         });
 
@@ -159,6 +157,9 @@ public class Controller{
         favoriteList = FXCollections.observableArrayList();
         myListViewFav.setItems(favoriteList);
         myListViewFav.itemsProperty().bind(Favorites.favList);
+
+        // Suchliste mit Filter verbinden
+        // filteredMovies = new FilteredList<>(movieDb.moviesList, s -> true);
 
         toFavouritelistButton.setVisible(false);
         toReminderlistButton.setVisible(false);
@@ -178,61 +179,52 @@ public class Controller{
         favoriteList.addAll(favoriteMovies.FavMovies2List());
     }
 
-    public void setData(String... comboBoxValues)
-    {
+    public void setData(String... comboBoxValues) {
         this.comboBoxValues = comboBoxValues;
     }
 
-    public void showFilm()
-    {
-        String selectedTitle = myListView.getSelectionModel().getSelectedItem().toString();
-        System.out.println("Ausgewaehlter Film: " + selectedTitle);
-
+    public void showFilm() {
         Object selectedObj = myListView.getSelectionModel().getSelectedItem();
-        Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-        // Referenz auf Movie Liste holen
-        // movies = movieDb.getMovies();
+        if (selectedObj != null) {
+            String selectedTitle = myListView.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Ausgewaehlter Film: " + selectedTitle);
 
-        //check(myListView.getSelectionModel().getSelectedItem());
-        //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
+            try {
+                Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-        toFavouritelistButton.setVisible(true);
-        toReminderlistButton.setVisible(true);
+                String movieDetail = movies.showDetails(selectedMovie, genres);
+                String movieUrl = movies.getMovieUrl(selectedMovie);
 
-        // String movieDetail = movies.showDetails(selectedIndex, genres);
-        String movieDetail = movies.showDetails(selectedMovie, genres);
-        // String movieDetail = movies.showDetails(selectedMovie, genres);
-        String movieUrl = movies.getMovieUrl(selectedMovie);
 
-        // textAreaDetail.appendText(movieDetail);
+                if(movieUrl != null && movieUrl.length() > 0)
+                {
+                    Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+                    imageViewMovie.setFitHeight(image.getHeight() / 2.0);
+                    imageViewMovie.setFitWidth(image.getWidth() / 2.0);
+                    imageViewMovie.setImage(image);
+                    imageViewMovie.setX(10);
+                    imageViewMovie.setY(10);
+                }
 
-        Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
-        imageViewMovie.setFitHeight(image.getHeight()/2.0);
-        imageViewMovie.setFitWidth(image.getWidth()/2.0);
-        // imageViewMovie.setImage(image);
+                labelDetail.setText(movieDetail);
+                labelDetail.setMaxWidth(300);
 
-        // String imageUrl = JavaFXSceneBuilder.class.getResource(image.toString()).toExternalForm();
-        /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
-                "-fx-background-position: center center; " +
-                "-fx-background-repeat: stretch;");
-                */
-        // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
-        imageViewMovie.setImage(image);
-        imageViewMovie.setX(10);
-        imageViewMovie.setY(10);
-        labelDetail.setText(movieDetail);
-        labelDetail.setMaxWidth(300);
-        // labelDetail.setMinHeight(image.getHeight());
-        // labelDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+                toFavouritelistButton.setVisible(true);
+                toReminderlistButton.setVisible(true);
+
+            } catch (Exception ex) {
+                System.out.print("Fehler beim Anzeigen der Filmdetails: " + ex.getMessage());
+            }
+        } else
+            System.out.print("Objekt konnte nicht aus Suchliste gelesen werden");
     }
-    public void searchMovies(KeyEvent event)
-    {
+
+    public void searchMovies(KeyEvent event) {
         List<String> years = new ArrayList<>();
         String search = textfieldSearch.getText();
         KeyCode code = event.getCode();
-        if (code != KeyCode.SPACE)
-        {
+        if (code != KeyCode.SPACE) {
             if (search.length() >= 2) {
                 System.out.println("Auto ver an");
                 try {
@@ -258,13 +250,16 @@ public class Controller{
                     comboBoxYearTo.setValue(null);
                     years = movieDb.getMovies().getYearsofMovies();
                     years.sort(Comparator.naturalOrder());
-                    for(String item : years)
-                    {
-                        if(!comboBoxYearFrom.getItems().contains(item)) {
+                    for (String item : years) {
+                        if (!comboBoxYearFrom.getItems().contains(item)) {
                             comboBoxYearFrom.getItems().add(item);
                             comboBoxYearTo.getItems().add(item);
                         }
                     }
+
+                    // Erstes bzw. letztes Element auswaehlen
+                    comboBoxYearFrom.getSelectionModel().select(0);
+                    comboBoxYearTo.getSelectionModel().select(comboBoxYearTo.getItems().size() - 1);
 
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
@@ -275,27 +270,21 @@ public class Controller{
         }
     }
 
-    public void searchMoviesFav()
-    {
-        if (textfieldSearchFav.getText().length()>=3)
-        {
+    public void searchMoviesFav() {
+        if (textfieldSearchFav.getText().length() >= 3) {
             System.out.println("Auto ver an");
-        }
-        else
-        {
+        } else {
             //System.out.println("auto aus");
         }
     }
 
-    public void searchMoviesEnter()
-    {
+    public void searchMoviesEnter() {
         //System.out.println("Search");
-        String [] films = {"Spi", "Spi 2", "Endo"}; // hier methoden aufruf für suche
+        String[] films = {"Spi", "Spi 2", "Endo"}; // hier methoden aufruf für suche
         fillListView(films);
     }
 
-    public void fillListView(String... films)
-    {
+    public void fillListView(String... films) {
         myListView.getItems().clear();
         myListView.getItems().addAll(films);
     }
@@ -344,45 +333,43 @@ public class Controller{
     }
     */
 
-    public void changeImageStarToFullFav()
-    {
+    public void changeImageStarToFullFav() {
         changeImageStarFullFav(1);
     }
-    public void changeImageStarToFullFav2()
-    {
+
+    public void changeImageStarToFullFav2() {
         changeImageStarFullFav(2);
     }
-    public void changeImageStarToFullFav3()
-    {
+
+    public void changeImageStarToFullFav3() {
         changeImageStarFullFav(3);
     }
-    public void changeImageStarToFullFav4()
-    {
+
+    public void changeImageStarToFullFav4() {
         changeImageStarFullFav(4);
     }
-    public void changeImageStarToFullFav5()
-    {
+
+    public void changeImageStarToFullFav5() {
         changeImageStarFullFav(5);
     }
 
-    public void changeImageStarToEmptyFav()
-    {
+    public void changeImageStarToEmptyFav() {
         changeImageStarEmptyFav(1);
     }
-    public void changeImageStarToEmptyFav2()
-    {
+
+    public void changeImageStarToEmptyFav2() {
         changeImageStarEmptyFav(2);
     }
-    public void changeImageStarToEmptyFav3()
-    {
+
+    public void changeImageStarToEmptyFav3() {
         changeImageStarEmptyFav(3);
     }
-    public void changeImageStarToEmptyFav4()
-    {
+
+    public void changeImageStarToEmptyFav4() {
         changeImageStarEmptyFav(4);
     }
-    public void changeImageStarToEmptyFav5()
-    {
+
+    public void changeImageStarToEmptyFav5() {
         changeImageStarEmptyFav(5);
     }
 
@@ -467,8 +454,7 @@ public class Controller{
     }
     */
 
-    public void changeImageStarFullFav(int x)
-    {
+    public void changeImageStarFullFav(int x) {
         Image myImage = new Image("SternVoll.png");
         Image myImage2 = new Image("SternLeer.png");
 
@@ -512,8 +498,7 @@ public class Controller{
         }
     }
 
-    public void changeImageStarEmptyFav(int x)
-    {
+    public void changeImageStarEmptyFav(int x) {
         Image myImage = new Image("SternLeer.png");
 
         switch(x)
@@ -546,177 +531,156 @@ public class Controller{
         }
     }
 
-    public void addToFavorites()
-    {
-        try {
-            String title = myListView.getSelectionModel().getSelectedItem().toString();
-            System.out.println("Film " + title + " wird den Favoriten hinzugefuegt");
-
+    public void addToFavorites() {
             Object selectedObj = myListView.getSelectionModel().getSelectedItem();
-            Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-            if (selectedMovie != null)
-                favoriteMovies.getFavorites().add(selectedMovie);
+            if (selectedObj != null)
+            {
+                String title = myListView.getSelectionModel().getSelectedItem().toString();
+                System.out.println("Film " + title + " wird den Favoriten hinzugefuegt");
 
-            favoriteMovies.addFavorites(selectedMovie);
-            favoriteMovies.Movies2File(localPath);
-
-        }
-        catch(Exception ex){
-            System.out.println(ex);
-        }
-    }
-
-    public void delteFromFavorites()
-    {
-        try {
-            int selectedItemIndex = myListViewFav.getSelectionModel().getSelectedIndex();
-            String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
-            System.out.println("Film " + title + " wird aus den Favoriten geloescht");
-
-            Object selectedObj = myListViewFav.getSelectionModel().getSelectedItem();
-            Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
-
-            if (selectedMovie != null) {
-                // favoriteMovies.getFavorites().remove(selectedMovie);
-                // favoriteMovies.favList.remove(selectedMovie);
-                myListViewFav.getSelectionModel().select(0);
-                favoriteMovies.deleteFavorites(selectedMovie);
+                try
+                {
+                    Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+                    if(!favoriteMovies.getFavorites().contains(selectedMovie)) {
+                        favoriteMovies.getFavorites().add(selectedMovie);
+                        favoriteMovies.addFavorites(selectedMovie);
+                        favoriteMovies.Movies2File(localPath);
+                    }
+                    else
+                        System.out.println("Ausgewaehlter Fiml schon Favoriten enthalten");
+                }
+                catch(Exception ex)
+                {
+                    System.out.println("Fehler beim Hinzufuegen der Favoriten: " + ex.getMessage());
+                }
             }
-
-            favoriteMovies.Movies2File(localPath);
-        }
-        catch(Exception ex){
-            System.out.println(ex);
-        }
+            else
+                System.out.println("Objekt konnte nicht aus Liste ermittelt werden");
     }
 
-    public void showFavFilm()
-    {
+    public void delteFromFavorites() {
+        try
+        {
+            Object selectedObj = myListViewFav.getSelectionModel().getSelectedItem();
+            if (selectedObj != null) {
+                String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
+                System.out.println("Film " + title + " wird aus den Favoriten geloescht");
+                Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+                if(favoriteMovies.getFavorites().contains(selectedMovie))
+                {
+                    try
+                    {
+                        favoriteMovies.deleteFavorites(selectedMovie);
+                        favoriteMovies.Movies2File(localPath);
+                    } catch (Exception ex) {
+                        System.out.println("Fehler beim Loeschen aus Liste: " + ex.getMessage());
+                    }
+                }
+                else
+                    System.out.print("Film konnte nicht in Liste gefunden werden");
+            }
+            else
+                System.out.println("Film konnte nicht ausgewaehlt werden.");
+        }
+        catch(Exception ex)
+            {
+                System.out.println(ex);
+            }
+    }
+
+
+    public void showFavFilm() {
         int rating = -1;
 
-
-        imageViewStarFav1.setVisible(true);
-        imageViewStarFav2.setVisible(true);
-        imageViewStarFav3.setVisible(true);
-        imageViewStarFav4.setVisible(true);
-        imageViewStarFav5.setVisible(true);
-
-        deleteFavouritelistButtonFav.setVisible(true);
-        toReminderlistButtonFav.setVisible(true);
-
-
-        // Erstmal die Sterne wieder ablöschen
-        changeImageStarToEmptyFav();
-        changeImageStarToEmptyFav2();
-        changeImageStarToEmptyFav3();
-        changeImageStarToEmptyFav4();
-        changeImageStarToEmptyFav5();
-
-
-        String selectedTitle = myListViewFav.getSelectionModel().getSelectedItem().toString();
-        System.out.println("Ausgewaehlter Film: " + selectedTitle);
-
         Object selectedObj = myListViewFav.getSelectionModel().getSelectedItem();
-        Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-        deleteFavouritelistButtonFav.setVisible(true);
-        toReminderlistButtonFav.setVisible(true);
-
-
-        // String movieDetail = movies.showDetails(selectedIndex, genres);
-        String movieDetail = favoriteMovies.showDetails(selectedMovie, genres);
-        // String movieDetail = movies.showDetails(selectedMovie, genres);
-        String movieUrl = favoriteMovies.getMovieUrl(selectedMovie);
-
-        Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
-        imageViewMovie.setFitHeight(image.getHeight()/2.0);
-        imageViewMovie.setFitWidth(image.getWidth()/2.0);
-        // imageViewMovie.setImage(image);
-
-        // String imageUrl = JavaFXSceneBuilder.class.getResource(image.toString()).toExternalForm();
-        /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
-                "-fx-background-position: center center; " +
-                "-fx-background-repeat: stretch;");
-                */
-
-        // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+        if(selectedObj != null) {
+            String selectedTitle = myListViewFav.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Ausgewaehlter Film: " + selectedTitle);
 
 
-        labelFavDetail.setText(movieDetail);
-        labelFavDetail.setMaxWidth(image.getWidth());
-        labelFavDetail.setMinHeight(image.getHeight());
-        labelFavDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
+            imageViewStarFav1.setVisible(true);
+            imageViewStarFav2.setVisible(true);
+            imageViewStarFav3.setVisible(true);
+            imageViewStarFav4.setVisible(true);
+            imageViewStarFav5.setVisible(true);
 
+            deleteFavouritelistButtonFav.setVisible(true);
+            toReminderlistButtonFav.setVisible(true);
 
-       /*
-        imageViewMovie.setImage(image);
-        imageViewMovie.setX(10);
-        imageViewMovie.setY(10);
-        labelDetail.setText(movieDetail);
-        labelDetail.setMaxWidth(300);
-        /*
+            // Erstmal die Sterne wieder ablöschen
+            changeImageStarToEmptyFav();
+            changeImageStarToEmptyFav2();
+            changeImageStarToEmptyFav3();
+            changeImageStarToEmptyFav4();
+            changeImageStarToEmptyFav5();
 
-        int selectedIndex = myListViewFav.getSelectionModel().getSelectedIndex();
-        String selectedMovie = myListViewFav.getSelectionModel().getSelectedItem().toString();
-        System.out.println(selectedMovie);
+            Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-        //check(myListView.getSelectionModel().getSelectedItem());
-        //prüft ob bereits in 1. Favliste 2. Merkliste 3. bewertet...
+            deleteFavouritelistButtonFav.setVisible(true);
+            toReminderlistButtonFav.setVisible(true);
 
-        // String movieDetail = favoriteMovies.showFavDetails(selectedMovie, genres);
-        String movieDetail = favoriteMovies.showFavDetails(selectedIndex, genres);
-        String movieUrl = favoriteMovies.getFavMovieUrl(selectedMovie);
+            try {
+                String movieDetail = favoriteMovies.showDetails(selectedMovie, genres);
+                String movieUrl = favoriteMovies.getMovieUrl(selectedMovie);
 
-        Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+                if(movieUrl != null && movieUrl.length() > 0)
+                {
+                    Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+                    imageViewMovie.setFitHeight(image.getHeight() / 2.0);
+                    imageViewMovie.setFitWidth(image.getWidth() / 2.0);
+                    labelFavDetail.setMaxWidth(image.getWidth());
+                    labelFavDetail.setMinHeight(image.getHeight());
+                }
 
-        // String imageUrl = JavaFXSceneBuilder.class.getResource(image.toString()).toExternalForm();
-        /* textAreaDetail.setStyle("-fx-background-image: " + "https://image.tmdb.org/t/p/w500/" + movieUrl + "; " +
-                "-fx-background-position: center center; " +
-                "-fx-background-repeat: stretch;");
+                labelFavDetail.setText(movieDetail);
+                labelFavDetail.setStyle("-fx-background-image: " + "url(https://image.tmdb.org/t/p/w500" + movieUrl + ");");
 
-        // textAreaDetail.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
-        labelFavDetail.setText(movieDetail);
-        labelFavDetail.setMaxWidth(image.getWidth());
-        labelFavDetail.setMinHeight(image.getHeight());
-        labelFavDetail.setStyle("-fx-background-image: "+ "url(https://image.tmdb.org/t/p/w500" + movieUrl+");");
-        */
+                // Rating (Sterne) der Filme anzeigen
+                rating = favoriteMovies.getFavRating(selectedMovie);
 
-        rating = favoriteMovies.getFavRating(selectedMovie);
-
-        switch (rating) {
-            case 1:
-                changeImageStarToFullFav();
-                break;
-            case 2:
-                changeImageStarToFullFav();
-                changeImageStarToFullFav2();
-                break;
-            case 3:
-                changeImageStarToFullFav();
-                changeImageStarToFullFav2();
-                changeImageStarToFullFav3();
-                break;
-            case 4:
-                changeImageStarToFullFav();
-                changeImageStarToFullFav2();
-                changeImageStarToFullFav3();
-                changeImageStarToFullFav4();
-                break;
-            case 5:
-                changeImageStarToFullFav();
-                changeImageStarToFullFav2();
-                changeImageStarToFullFav3();
-                changeImageStarToFullFav4();
-                changeImageStarToFullFav5();
-                break;
-            default:
+                switch (rating) {
+                    case 1:
+                        changeImageStarToFullFav();
+                        break;
+                    case 2:
+                        changeImageStarToFullFav();
+                        changeImageStarToFullFav2();
+                        break;
+                    case 3:
+                        changeImageStarToFullFav();
+                        changeImageStarToFullFav2();
+                        changeImageStarToFullFav3();
+                        break;
+                    case 4:
+                        changeImageStarToFullFav();
+                        changeImageStarToFullFav2();
+                        changeImageStarToFullFav3();
+                        changeImageStarToFullFav4();
+                        break;
+                    case 5:
+                        changeImageStarToFullFav();
+                        changeImageStarToFullFav2();
+                        changeImageStarToFullFav3();
+                        changeImageStarToFullFav4();
+                        changeImageStarToFullFav5();
+                        break;
+                    default:
+                }
+            }
+            catch(Exception ex)
+            {
+                System.out.println("Fehler beim Abfragen der Filme aus dem Movie Objekt: " + ex.getMessage());
+            }
         }
-
+        else
+        {
+            System.out.println("Fehler beim Einlesen des Objekts aus der Suchliste");
+        }
     }
 
-    public void changeImageStarToRating(int rating)
-    {
+    public void changeImageStarToRating(int rating) {
         try {
             String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
 
@@ -732,34 +696,29 @@ public class Controller{
             System.out.println(ex);
         }
     }
-    public void changeImageStarToRatingOne()
-    {
+    public void changeImageStarToRatingOne() {
         changeImageStarToRating(1);
         changeImageStarToFullFav();
     }
-    public void changeImageStarToRatingTwo()
-    {
+    public void changeImageStarToRatingTwo() {
         changeImageStarToRating(2);
         changeImageStarToFullFav();
         changeImageStarToFullFav2();
     }
-    public void changeImageStarToRatingThree()
-    {
+    public void changeImageStarToRatingThree() {
         changeImageStarToRating(3);
         changeImageStarToFullFav();
         changeImageStarToFullFav2();
         changeImageStarToFullFav3();
     }
-    public void changeImageStarToRatingFour()
-    {
+    public void changeImageStarToRatingFour() {
         changeImageStarToRating(4);
         changeImageStarToFullFav();
         changeImageStarToFullFav2();
         changeImageStarToFullFav3();
         changeImageStarToFullFav4();
     }
-    public void changeImageStarToRatingFive()
-    {
+    public void changeImageStarToRatingFive() {
         changeImageStarToRating(5);
         changeImageStarToFullFav();
         changeImageStarToFullFav2();
@@ -768,75 +727,60 @@ public class Controller{
         changeImageStarToFullFav5();
     }
 
-    public void sortFavSearchList(String selection)
-    {
-        if(selection == "A bis Z")
-            myListViewFav.getItems().sort(Comparator.naturalOrder());
-            // java.util.Collections.sort(myListViewFav.getItems(), Collator.getInstance(Locale.GERMAN));
-        else
-            myListViewFav.getItems().sort(Comparator.reverseOrder());
-            // java.util.Collections.reverse(myListViewFav.getItems());
+    public void sortFavSearchList(String selection) {
+        try
+        {
+            if (selection == "A bis Z")
+                favoriteMovies.favList.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+            else
+                favoriteMovies.favList.sort((o1, o2) -> o2.getTitle().compareTo(o1.getTitle()));
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Fehler beim Sortieren der Filme");
+        }
+
     }
 
     public void sortSearchList(String selection) {
-        movies = movieDb.getMovies();
 
-        if (selection == "A bis Z")
-            movieDb.moviesList.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+        try
+        {
+            if (selection == "A bis Z")
+                movieDb.moviesList.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+            else
+                movieDb.moviesList.sort((o1, o2) -> o2.getTitle().compareTo(o1.getTitle()));
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Fehler beim Sortieren der Filme");
+        }
+    }
+
+    public void filterYears() {
+        int yearFromInt = -1;
+        int yearToInt = -1;
+
+        try {
+            yearFromInt = Integer.parseInt(comboBoxYearFrom.getSelectionModel().getSelectedItem().toString());
+            yearToInt = Integer.parseInt(comboBoxYearTo.getSelectionModel().getSelectedItem().toString());
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Fehler beim Lesen der Grenzen");
+        }
+
+        if(yearFromInt != -1 && yearToInt != -1) {
+            try {
+                System.out.println("Filter zwischen " + yearFromInt + " und " + yearToInt);
+                movieDb.filterMovies(yearFromInt, yearToInt);
+            } catch (Exception ex) {
+                System.out.println("Exception beim Filtern der Filme: " + ex.getMessage());
+
+            }
+        }
         else
-            movieDb.moviesList.sort((o1, o2) -> o2.getTitle().compareTo(o1.getTitle()));
-    }
-
-    public void filterYearFrom(String yearFrom)
-    {
-        movies = movieDb.getMovies();
-        List<String> filteredList = new ArrayList<>();
-        int yearFromInt = Integer.parseInt(yearFrom);
-        String tempString = "";
-        int tempInt = 0;
-
-        System.out.println("YearFrom: " + yearFrom);
-        for(Movies.Results item : movies.getResults())
-        {
-            tempString = item.getRelease_date();
-            tempString = tempString.substring(0,tempString.indexOf("-"));
-            tempInt = Integer.parseInt(tempString);
-
-            if(tempInt >= yearFromInt)
-                filteredList.add(item.getTitle());
-        }
-
-        HashMap<Integer,String> hashm = new HashMap<Integer, String>();
-        hashm.put(5,"bla");
-
-
-        myListView.getItems().setAll(filteredList);
-        myListView.getItems().setAll(hashm.keySet());
-
-    }
-
-    public void filterYearTo(String yearTo)
-    {
-        System.out.println("YearFrom: " + yearTo);
-
-        movies = movieDb.getMovies();
-        List<String> filteredList = new ArrayList<>();
-        int yearToInt = Integer.parseInt(yearTo);
-        String tempString = "";
-        int tempInt = 0;
-
-        System.out.println("YearFrom: " + yearTo);
-        for(Movies.Results item : movies.getResults())
-        {
-            tempString = item.getRelease_date();
-            tempString = tempString.substring(0,tempString.indexOf("-"));
-            tempInt = Integer.parseInt(tempString);
-
-            if(tempInt <= yearToInt)
-                filteredList.add(item.getTitle());
-        }
-
-            myListView.getItems().setAll(filteredList);
+            System.out.println("Grenzen fuer Filterung konnten nicht eingelesen werden");
     }
 
 }

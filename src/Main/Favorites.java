@@ -103,12 +103,19 @@ public class Favorites extends Movies {
     }
 
     public boolean deleteFavorites(Results element){
+
         if(element != null) {
-            // this.favList.remove(element);
-            this.favorites.remove(element);
-            ObservableList<Results> obsMovieList = FXCollections.observableArrayList(this.favorites);
-            favList.setValue(obsMovieList);
-            return true;
+            try {
+                this.favorites.remove(element);
+                ObservableList<Results> obsMovieList = FXCollections.observableArrayList(this.favorites);
+                favList.setValue(obsMovieList);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.out.print("Fehler in der Klasse Favorites beim Loeschen des Objekts: " + ex.getMessage());
+                return false;
+            }
         }
         else {
             System.out.println("Film konnte nicht aus Favoriten geloescht werden");

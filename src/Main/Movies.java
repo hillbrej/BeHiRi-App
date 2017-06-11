@@ -28,6 +28,7 @@ public class Movies {
         private boolean video;
         private double vote_average;
         private int rating;
+        private int releaseYear;
 
         // GETTER-Methoden für Movies Klasse
         public int getId() {
@@ -92,6 +93,14 @@ public class Movies {
 
         public void setRating(int rating) {
             this.rating = rating;
+        }
+
+        public int getReleaseYear() {
+            return releaseYear;
+        }
+
+        public void setReleaseYear(int releaseYear) {
+            this.releaseYear = releaseYear;
         }
 
         // Overrides fuer toString-Methode
@@ -178,9 +187,14 @@ public class Movies {
         String genres = "";
 
         if (movie != null) {
-            output = "Titel:\t\t\t\t" + movie.getTitle() + "\n\n";
-            output = output + "Originaltitel:\t\t" + movie.getOriginal_title() + "\n";
-            output = output + "Erscheinungsjahr:\t" + movie.getRelease_date() + "\n";
+            if(movie.getTitle() != null && movie.getTitle().length() > 0)
+                output = "Titel:\t\t\t\t" + movie.getTitle() + "\n\n";
+
+            if(movie.getOriginal_title() != null && movie.getOriginal_title().length() > 0)
+                output = output + "Originaltitel:\t\t" + movie.getOriginal_title() + "\n";
+
+            if(movie.getRelease_date() != null && movie.getRelease_date().length() > 0)
+                output = output + "Erscheinungsjahr:\t" + movie.getRelease_date() + "\n";
 
             // Genres abfragen
             for (int j = 0; j < movie.getGenre_ids().length; j++) {
@@ -191,8 +205,11 @@ public class Movies {
                 }
             }
 
-            output = output + "Genres:\t\t\t" + genres + "\n\n";
-            output = output + "Beschreibung:\n" + movie.getOverview() + "\n";
+            if(genres != null && genres.length() > 0)
+                output = output + "Genres:\t\t\t" + genres + "\n\n";
+
+            if(movie.getOverview() != null && movie.getOverview().length() > 0)
+                output = output + "Beschreibung:\n" + movie.getOverview() + "\n";
 
         }
 

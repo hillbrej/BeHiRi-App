@@ -21,6 +21,7 @@ public class MovieDb implements Runnable {
     public static int counter = 0;
     // public static ListProperty<String> moviesList = new SimpleListProperty<>();
     public static ListProperty<Movies.Results> moviesList = new SimpleListProperty<>();
+    public static ListProperty<Movies.Results> backupMoviesList = new SimpleListProperty<>();
 
     private String host = "";
     private String pathMovieSearch = "";
@@ -112,8 +113,14 @@ public class MovieDb implements Runnable {
     // Methoden Aufrufe
     public Movies ApiQueryMovies(String searchString) {
 
+        // tempString fuer puffern Erscheinungsjahre
+        String tempString = "";
+
+        // API Counter hochzaehlen
         counter++;
         System.out.println("API-Anfragen: " + counter);
+
+        // Suchstring bilden
         searchString = "&query=" + searchString;
         String queryString = this.apiKey + this.language + searchString + this.queryTail;
 
@@ -137,6 +144,20 @@ public class MovieDb implements Runnable {
 
             // Zuweisung über GSON
             Movies movies = new Gson().fromJson(reader, Movies.class);
+
+            // Am Ende noch die Jahre für die Erscheinungen in int-Variable shreiben
+            // damit spaeter einfacher gefiltert werden kann
+            for(Movies.Results item : movies.getResults())
+            {
+                if(item.getRelease_date()!=null) {
+                    tempString = item.getRelease_date();
+                    if(tempString.length() >= 4) {
+                        tempString = tempString.substring(0, tempString.indexOf("-"));
+                        item.setReleaseYear(Integer.parseInt(tempString));
+                    }
+                }
+            }
+
             return  movies;
 
         } catch (URISyntaxException | IOException ex) {
@@ -184,12 +205,19 @@ public class MovieDb implements Runnable {
 
     }
 
+    public void filterMovies(int yearFrom, int yearTo)
+    {
+        ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> s.getReleaseYear() >= yearFrom && s.getReleaseYear() <= yearTo));
+        moviesList.setValue(obsMovieList);
+    }
+
     // Methode Run für Thread zum Suchen
     @Override
     public void run() {
         this.movies = ApiQueryMovies(this.searchString);
         // ObservableList<String> obsMovieList = FXCollections.observableArrayList(this.movies.Movies2List());
         ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(this.movies.getResults());
+        backupMoviesList.setValue(moviesList);
         Platform.runLater(() -> moviesList.setValue(obsMovieList));
 
         // Platform.runLater(() -> moviesList.setValue(obsMovieList));
