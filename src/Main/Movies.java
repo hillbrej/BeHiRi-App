@@ -200,7 +200,7 @@ public class Movies {
             for (int j = 0; j < movie.getGenre_ids().length; j++) {
                 for (int k = 0; k < genresIds.genres.length; k++) {
                     if (genresIds.genres[k].getId() == movie.getGenre_ids()[j]) {
-                        genres = genres + genresIds.genres[k].getName() + ", ";
+                        genres = genres + " - " + genresIds.genres[k].getName() + "\n\t\t\t\t";
                         break;
                     }
                 }
@@ -212,6 +212,50 @@ public class Movies {
             if(movie.getOverview() != null && movie.getOverview().length() > 0)
                 output = output + "Beschreibung:\n" + movie.getOverview() + "\n";
 
+        }
+
+        return output;
+    }
+
+    public String showDetailsWithoutOverview(Results movie, MovieGenres genresIds) {
+        String output = "";
+        String genres = "";
+
+        if (movie != null) {
+            if(movie.getTitle() != null && movie.getTitle().length() > 0)
+                output = "Titel:\t\t\t\t" + movie.getTitle() + "\n\n";
+
+            if(movie.getOriginal_title() != null && movie.getOriginal_title().length() > 0)
+                output = output + "Originaltitel:\t\t" + movie.getOriginal_title() + "\n";
+
+            if(movie.getRelease_date() != null && movie.getRelease_date().length() > 0)
+                output = output + "Erscheinungsjahr:\t" + movie.getRelease_date() + "\n";
+
+            // Genres abfragen
+            for (int j = 0; j < movie.getGenre_ids().length; j++) {
+                for (int k = 0; k < genresIds.genres.length; k++) {
+                    if (genresIds.genres[k].getId() == movie.getGenre_ids()[j]) {
+                        genres = genres + " - " + genresIds.genres[k].getName() + "\n\t\t\t\t";
+                        break;
+                    }
+                }
+            }
+
+            if(genres != null && genres.length() > 0)
+                output = output + "Genres:\t\t\t" + genres + "\n\n";
+
+        }
+
+        return output;
+    }
+
+    public String showDetailsOverview(Results movie) {
+        String output = "";
+        String genres = "";
+
+        if (movie != null) {
+            if(movie.getOverview() != null && movie.getOverview().length() > 0)
+                output = output + "Beschreibung:\n" + movie.getOverview() + "\n";
         }
 
         return output;

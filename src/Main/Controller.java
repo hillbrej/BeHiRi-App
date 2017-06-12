@@ -90,6 +90,7 @@ public class Controller {
     public ComboBox comboBoxYearFrom;
     public ComboBox comboBoxYearTo;
     public Pane paneFavBackground;
+    public Label labelOverview;
 
     @FXML
     private void initialize() {
@@ -208,7 +209,11 @@ public class Controller {
             try {
                 Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
 
-                String movieDetail = movies.showDetails(selectedMovie, genres);
+                // String movieDetail = movies.showDetails(selectedMovie, genres);
+
+                String movieDetail = movies.showDetailsWithoutOverview(selectedMovie,genres);
+                String movieOverview = movies.showDetailsOverview(selectedMovie);
+
                 String movieUrl = movies.getMovieUrl(selectedMovie);
 
                 Image image;
@@ -225,10 +230,10 @@ public class Controller {
                 imageViewMovie.setFitHeight(image.getHeight() / 2.0);
                 imageViewMovie.setFitWidth(image.getWidth() / 2.0);
                 imageViewMovie.setImage(image);
-                imageViewMovie.setX(10);
-                imageViewMovie.setY(10);
+
                 labelDetail.setText(movieDetail);
-                labelDetail.setMaxWidth(300);
+                labelOverview.setText(movieOverview);
+
 
                 toFavouritelistButton.setVisible(true);
                 toReminderlistButton.setVisible(true);
