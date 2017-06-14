@@ -91,6 +91,7 @@ public class Controller {
     public ComboBox comboBoxYearTo;
     public Pane paneFavBackground;
     public Label labelOverview;
+    public ComboBox comboBoxGenres;
 
     @FXML
     private void initialize() {
@@ -285,6 +286,13 @@ public class Controller {
                     // Erstes bzw. letztes Element auswaehlen
                     comboBoxYearFrom.getSelectionModel().select(0);
                     comboBoxYearTo.getSelectionModel().select(comboBoxYearTo.getItems().size() - 1);
+
+                    // Combobox mit Genres fuellen
+                    for(MovieGenres.Genres item : genres.genres)
+                    {
+                        comboBoxGenres.getItems().add(item.getName());
+                    }
+
 
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
