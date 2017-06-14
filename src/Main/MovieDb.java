@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +23,8 @@ public class MovieDb implements Runnable {
     // public static ListProperty<String> moviesList = new SimpleListProperty<>();
     public static ListProperty<Movies.Results> moviesList = new SimpleListProperty<>();
     public static ListProperty<Movies.Results> backupMoviesList = new SimpleListProperty<>();
+    public static ListProperty<String> yearsFrom = new SimpleListProperty<>();
+    public static ListProperty<String> yearsTo = new SimpleListProperty<>();
 
     private String host = "";
     private String pathMovieSearch = "";
@@ -131,32 +134,11 @@ public class MovieDb implements Runnable {
             URL url = new URI("https", this.host, this.pathMovieSearch, queryString, null).toURL();
             Reader reader = new InputStreamReader(url.openStream()); // Stream für den Inhalt an URL öffnen
 
-            // Ausgabe vom reader - ! Nach Auslesen ist reader auf null !
-            /*
-            System.out.println("Ausgabe von reader:");
-            int i = 0;
-            while(i != -1)
-            {
-                i = reader.read();
-                System.out.print((char) i);
-            }
-            */
-
             // Zuweisung über GSON
             Movies movies = new Gson().fromJson(reader, Movies.class);
 
             // Am Ende noch die Jahre für die Erscheinungen in int-Variable shreiben
             // damit spaeter einfacher gefiltert werden kann
-            for(Movies.Results item : movies.getResults())
-            {
-                if(item.getRelease_date()!=null) {
-                    tempString = item.getRelease_date();
-                    if(tempString.length() >= 4) {
-                        tempString = tempString.substring(0, tempString.indexOf("-"));
-                        item.setReleaseYear(Integer.parseInt(tempString));
-                    }
-                }
-            }
 
             return  movies;
 
@@ -205,22 +187,47 @@ public class MovieDb implements Runnable {
 
     }
 
-    public void filterMovies(int yearFrom, int yearTo)
-    {
-        ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> s.getReleaseYear() >= yearFrom && s.getReleaseYear() <= yearTo));
+    public void filterMovies(int yearFrom, int yearTo) {
+        ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> (s.getReleaseYear() >= yearFrom && s.getReleaseYear() <= yearTo) || s.getReleaseYear() == 0));
         moviesList.setValue(obsMovieList);
     }
 
     // Methode Run für Thread zum Suchen
     @Override
     public void run() {
+        String tempString = "";
+        List<String> tempList = new ArrayList<>();
+
         this.movies = ApiQueryMovies(this.searchString);
         // ObservableList<String> obsMovieList = FXCollections.observableArrayList(this.movies.Movies2List());
         ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(this.movies.getResults());
         backupMoviesList.setValue(moviesList);
         Platform.runLater(() -> moviesList.setValue(obsMovieList));
 
-        // Platform.runLater(() -> moviesList.setValue(obsMovieList));
+        for(Movies.Results item : movies.getResults())
+        {
+            if(item.getRelease_date()!=null) {
+                tempString = item.getRelease_date();
+                if(tempString.length() >= 4) {
+                    tempString = tempString.substring(0, tempString.indexOf("-"));
+
+                    // Jahr der Property zuweisen
+                    item.setReleaseYear(Integer.parseInt(tempString));
+
+                    if(!tempList.contains(tempString))
+                        tempList.add(tempString);
+                }
+                else
+                    item.setReleaseYear(0);
+            }
+        }
+
+        tempList.sort(Comparator.naturalOrder());
+
+        ObservableList<String> obsYears = FXCollections.observableArrayList(tempList);
+        yearsFrom.setValue(obsYears);
+        yearsTo.setValue(obsYears);
+
     }
 
 }

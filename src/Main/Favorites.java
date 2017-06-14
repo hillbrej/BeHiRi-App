@@ -79,18 +79,6 @@ public class Favorites extends Movies {
         return movies;
     }
 
-    /* public boolean addFavorites(Results element){
-        if(!favoriteIds.contains(element.getId())) {
-            this.favorites.add(element);
-            this.favoriteIds.add(element.getId());
-            return true;
-        }
-        else {
-            System.out.println("Film schon in Favoriten enthalten");
-            return false;
-        }
-    }*/
-
     public boolean addFavorites(Results element) {
         if (element != null) {
             ObservableList<Results> obsMovieList = FXCollections.observableArrayList(this.favorites);
@@ -162,8 +150,7 @@ public class Favorites extends Movies {
         return url;
     }
 
-    public int getFavRating(String title)
-    {
+    public int getFavRating(String title) {
         int rating = -1;
         for(Movies.Results item : this.favorites) {
             if (item.getTitle() == title)
@@ -200,5 +187,11 @@ public class Favorites extends Movies {
         return output;
     }
 
+    public boolean isIdInFavorites(int id) {
+        if(favoriteIds.contains(id))
+            return true;
+        else
+            return false;
+    }
 
 }

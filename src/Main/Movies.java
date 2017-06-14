@@ -2,6 +2,7 @@ package Main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntBinaryOperator;
 
 /**
  * Created by Jonas on 12.05.2017.
@@ -270,22 +271,22 @@ public class Movies {
         return url;
     }
 
-    public List<String> getYearsofMovies() {
-        List<String> listYears = new ArrayList<>();
+    public List<Integer> getYearsofMovies() {
+        List<Integer> listYears = new ArrayList<>();
         String tempString;
 
         for (Results item : results) {
-            tempString = item.getRelease_date();
-            tempString = tempString.substring(0, tempString.indexOf("-"));
-            listYears.add(tempString);
+            // tempString = item.getRelease_date();
+            // tempString = tempString.substring(0, tempString.indexOf("-"));
+            // listYears.add(tempString);
+            listYears.add(item.getReleaseYear());
         }
 
         return listYears;
 
     }
 
-    public int getFavRating(Results movie)
-    {
+    public int getFavRating(Results movie) {
             int rating = -1;
 
             if(movie != null)
