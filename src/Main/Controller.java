@@ -18,6 +18,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -70,6 +71,7 @@ public class Controller {
     public ImageView imageViewStar5;
     public Button toFavouritelistButton;
     public Button toReminderlistButton;
+    public TabPane TabPane;
 
     public ComboBox myComboboxFav;
     public ListView myListViewFav;
@@ -253,6 +255,8 @@ public class Controller {
         if (code != KeyCode.SPACE) {
             if (search.length() >= 2) {
                 System.out.println("Auto ver an");
+
+                TabPane.cursorProperty().setValue(Cursor.WAIT);
                 try {
                     // Neuen Executor Service starten
                     System.out.println("Suche nach: " + search);
@@ -296,6 +300,8 @@ public class Controller {
 
                 } catch (Exception ex) {
                     System.out.println(ex.toString());
+                } finally {
+                    TabPane.cursorProperty().setValue(Cursor.DEFAULT);
                 }
             } else {
                 //System.out.println("auto aus");
