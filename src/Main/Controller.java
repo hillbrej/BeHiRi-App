@@ -116,6 +116,13 @@ public class Controller {
     public ComboBox stylesheetComboBox;
     public Label shortInfoLabel;
 
+    public Label filterLabel;
+    public Label listingLabel;
+    public Label fromLabel;
+    public Label toLabel;
+
+
+
     public String initCombo = "Klassisch";
 
     @FXML
@@ -136,6 +143,18 @@ public class Controller {
         myListViewRem.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showRemFilm());
         listViewGenres.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> filterGenres());
 /*hier*/
+
+        myComboboxRem.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                // System.out.println(ov);
+                // System.out.println(t);
+                System.out.println("Combobox-Auswahl: " + t1);
+                if (t1 != null)
+                    sortRemSearchList(t1);
+            }
+        });
+
         myComboboxFav.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String t, String t1) {
@@ -233,6 +252,16 @@ public class Controller {
         deleteRemindlistButtonRem.setVisible(false);
         toFavoritelistButtonRem.setVisible(false);
 
+        filterLabel.setVisible(false);
+        listingLabel.setVisible(false);
+        fromLabel.setVisible(false);
+        toLabel.setVisible(false);
+
+        comboBoxYearFrom.setVisible(false);
+        comboBoxYearTo.setVisible(false);
+
+        listViewGenres.setVisible(false);
+
         // Logos anzeigen
         paneFavBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
         paneFavBackground.setPrefWidth(312);
@@ -259,7 +288,36 @@ public class Controller {
     }
 
     public void searchMoviesRem(){}
-    public void deleteFromReminder(){}
+    public void deleteFromReminder(){
+        try
+        {
+            Object selectedObj = myListViewRem.getSelectionModel().getSelectedItem();
+
+            if (selectedObj != null) {
+                String title = myListViewRem.getSelectionModel().getSelectedItem().toString();
+                System.out.println("Film " + title + " wird aus den Merkliste geloescht");
+                Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+                if(remindedMovies.getReminders().contains(selectedMovie))
+                {
+                    try
+                    {
+                        remindedMovies.deleteReminders(selectedMovie);
+                        remindedMovies.Movies2File(localPath);
+                    } catch (Exception ex) {
+                        System.out.println("Fehler beim Loeschen aus Liste: " + ex.getMessage());
+                    }
+                }
+                else
+                    System.out.print("Film konnte nicht in Liste gefunden werden");
+            }
+            else
+                System.out.println("Film konnte nicht ausgewaehlt werden.");
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ex);
+        }
+    }
     public void addToReminded(){
         Object selectedObj = myListView.getSelectionModel().getSelectedItem();
 
@@ -385,6 +443,16 @@ public class Controller {
 
                 toFavouritelistButton.setVisible(true);
                 toReminderlistButton.setVisible(true);
+                /////////////////
+                filterLabel.setVisible(true);
+                listingLabel.setVisible(true);
+                fromLabel.setVisible(true);
+                toLabel.setVisible(true);
+
+                comboBoxYearFrom.setVisible(true);
+                comboBoxYearTo.setVisible(true);
+
+                listViewGenres.setVisible(true);
 
             } catch (Exception ex) {
                 System.out.print("Fehler beim Anzeigen der Filmdetails: " + ex.getMessage());
@@ -770,6 +838,35 @@ public class Controller {
                 System.out.println("Objekt konnte nicht aus Liste ermittelt werden");
     }
 
+    public void addToFavorites2() {
+        Object selectedObj = myListViewRem.getSelectionModel().getSelectedItem();
+
+        if (selectedObj != null)
+        {
+            String title = myListViewRem.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Film " + title + " wird den Favoriten hinzugefuegt");
+
+            try
+            {
+                Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+                if(!favoriteMovies.isIdInFavorites(selectedMovie.getId()))
+                {
+                    favoriteMovies.getFavorites().add(selectedMovie);
+                    favoriteMovies.addFavorites(selectedMovie);
+                    favoriteMovies.Movies2File(localPath);
+                }
+                else
+                    System.out.println("Ausgewaehlter Fiml schon Favoriten enthalten");
+            }
+            catch(Exception ex)
+            {
+                System.out.println("Fehler beim Hinzufuegen der Favoriten: " + ex.getMessage());
+            }
+        }
+        else
+            System.out.println("Objekt konnte nicht aus Liste ermittelt werden");
+    }
+
     public void delteFromFavorites() {
         try
         {
@@ -1022,6 +1119,8 @@ public class Controller {
         }
     }
 
+
+
     public void changeImageStarToRating(int rating) {
         try {
             String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
@@ -1038,14 +1137,46 @@ public class Controller {
             System.out.println(ex);
         }
     }
+
+    public void changeImageStarToRating2(int rating) {
+        try {
+            String title = myListViewRem.getSelectionModel().getSelectedItem().toString();
+
+            for (Movies.Results item : remindedMovies.getReminders()){
+                if (item.getTitle() == title){
+                    item.setRating(rating);
+                }
+            }
+
+            remindedMovies.Movies2File(localPath);
+        }
+        catch(Exception ex){
+            System.out.println(ex);
+        }
+    }
+
     public void changeImageStarToRatingOne() {
         changeImageStarToRating(1);
         changeImageStarToFullFav();
+    }
+    public void changeImageStarToRatingOneRem() {
+        changeImageStarToRating2(1);
+        Image starfull = new Image("SternVoll.png");
+        //changeImageStarToFullFav();
+        imageViewStarRem1.setImage(starfull);
     }
     public void changeImageStarToRatingTwo() {
         changeImageStarToRating(2);
         changeImageStarToFullFav();
         changeImageStarToFullFav2();
+    }
+    public void changeImageStarToRatingTwoRem() {
+        changeImageStarToRating2(2);
+        Image starfull = new Image("SternVoll.png");
+        //changeImageStarToFullFav();
+        //changeImageStarToFullFav2();
+        imageViewStarRem1.setImage(starfull);
+        imageViewStarRem2.setImage(starfull);
     }
     public void changeImageStarToRatingThree() {
         changeImageStarToRating(3);
@@ -1053,12 +1184,34 @@ public class Controller {
         changeImageStarToFullFav2();
         changeImageStarToFullFav3();
     }
+    public void changeImageStarToRatingThreeRem() {
+        changeImageStarToRating2(3);
+        /*changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+        changeImageStarToFullFav3();*/
+        Image starfull = new Image("SternVoll.png");
+        imageViewStarRem1.setImage(starfull);
+        imageViewStarRem2.setImage(starfull);
+        imageViewStarRem3.setImage(starfull);
+    }
     public void changeImageStarToRatingFour() {
         changeImageStarToRating(4);
         changeImageStarToFullFav();
         changeImageStarToFullFav2();
         changeImageStarToFullFav3();
         changeImageStarToFullFav4();
+    }
+    public void changeImageStarToRatingFourRem() {
+        changeImageStarToRating2(4);
+        /*changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+        changeImageStarToFullFav3();
+        changeImageStarToFullFav4();*/
+        Image starfull = new Image("SternVoll.png");
+        imageViewStarRem1.setImage(starfull);
+        imageViewStarRem2.setImage(starfull);
+        imageViewStarRem3.setImage(starfull);
+        imageViewStarRem4.setImage(starfull);
     }
     public void changeImageStarToRatingFive() {
         changeImageStarToRating(5);
@@ -1068,6 +1221,20 @@ public class Controller {
         changeImageStarToFullFav4();
         changeImageStarToFullFav5();
     }
+    public void changeImageStarToRatingFiveRem() {
+        changeImageStarToRating2(5);
+        /*changeImageStarToFullFav();
+        changeImageStarToFullFav2();
+        changeImageStarToFullFav3();
+        changeImageStarToFullFav4();
+        changeImageStarToFullFav5();*/
+        Image starfull = new Image("SternVoll.png");
+        imageViewStarRem1.setImage(starfull);
+        imageViewStarRem2.setImage(starfull);
+        imageViewStarRem3.setImage(starfull);
+        imageViewStarRem4.setImage(starfull);
+        imageViewStarRem5.setImage(starfull);
+    }
 
     public void sortFavSearchList(String selection) {
         try
@@ -1076,6 +1243,21 @@ public class Controller {
                 favoriteMovies.favList.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
             else
                 favoriteMovies.favList.sort((o1, o2) -> o2.getTitle().compareTo(o1.getTitle()));
+        }
+        catch(Exception ex)
+        {
+            System.out.println("Fehler beim Sortieren der Filme");
+        }
+
+    }
+
+    public void sortRemSearchList(String selection) {
+        try
+        {
+            if (selection == "A bis Z")
+                remindedMovies.remList.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+            else
+                remindedMovies.remList.sort((o1, o2) -> o2.getTitle().compareTo(o1.getTitle()));
         }
         catch(Exception ex)
         {

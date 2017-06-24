@@ -13,7 +13,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -143,7 +142,7 @@
                                                 <Insets left="30.0" />
                                              </GridPane.margin>
                                           </ComboBox>
-                                          <Label minWidth="300.0" prefHeight="25.0" prefWidth="218.0" text="Filtern nach Erscheinungsjahr (von - bis)">
+                                          <Label fx:id="filterLabel" minWidth="300.0" prefHeight="25.0" prefWidth="218.0" text="Filtern nach Erscheinungsjahr (von - bis)">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
@@ -156,17 +155,17 @@
                                              <GridPane.margin>
                                                 <Insets left="5.0" />
                                              </GridPane.margin></Button>
-                                          <Label text="bis" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <Label fx:id="toLabel" text="bis" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label text="Von" GridPane.rowIndex="1">
+                                          <Label fx:id="fromLabel" text="Von" GridPane.rowIndex="1">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label minHeight="25.0" minWidth="150.0" prefHeight="25.0" prefWidth="150.0" text="Listenverwaltung" GridPane.columnIndex="2">
+                                          <Label fx:id="listingLabel" minHeight="25.0" minWidth="150.0" prefHeight="25.0" prefWidth="150.0" text="Listenverwaltung" GridPane.columnIndex="2">
                                              <GridPane.margin>
                                                 <Insets left="5.0" />
                                              </GridPane.margin>
@@ -396,7 +395,7 @@
                                   <content>
                                       <FlowPane prefHeight="98.0" prefWidth="601.0">
                                           <children>
-                                              <ImageView fx:id="imageViewStarRem1" fitHeight="70.0" fitWidth="40.0" onMouseClicked="#changeImageStarToRatingOne" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fx:id="imageViewStarRem1" fitHeight="70.0" fitWidth="40.0" onMouseClicked="#changeImageStarToRatingOneRem" pickOnBounds="true" preserveRatio="true">
                                                   <image>
                                                       <Image url="@../SternLeer.png" />
                                                   </image>
@@ -404,7 +403,7 @@
                                                       <Insets left="5.0" top="10.0" />
                                                   </FlowPane.margin>
                                               </ImageView>
-                                              <ImageView fx:id="imageViewStarRem2" fitHeight="70.0" fitWidth="40.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingTwo" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fx:id="imageViewStarRem2" fitHeight="70.0" fitWidth="40.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingTwoRem" pickOnBounds="true" preserveRatio="true">
                                                   <image>
                                                       <Image url="@../SternLeer.png" />
                                                   </image>
@@ -412,7 +411,7 @@
                                                       <Insets top="10.0" />
                                                   </FlowPane.margin>
                                               </ImageView>
-                                              <ImageView fx:id="imageViewStarRem3" fitHeight="70.0" fitWidth="40.0" layoutX="50.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingThree" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fx:id="imageViewStarRem3" fitHeight="70.0" fitWidth="40.0" layoutX="50.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingThreeRem" pickOnBounds="true" preserveRatio="true">
                                                   <image>
                                                       <Image url="@../SternLeer.png" />
                                                   </image>
@@ -420,7 +419,7 @@
                                                       <Insets top="10.0" />
                                                   </FlowPane.margin>
                                               </ImageView>
-                                              <ImageView fx:id="imageViewStarRem4" fitHeight="70.0" fitWidth="40.0" layoutX="90.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingFour" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fx:id="imageViewStarRem4" fitHeight="70.0" fitWidth="40.0" layoutX="90.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingFourRem" pickOnBounds="true" preserveRatio="true">
                                                   <image>
                                                       <Image url="@../SternLeer.png" />
                                                   </image>
@@ -428,7 +427,7 @@
                                                       <Insets top="10.0" />
                                                   </FlowPane.margin>
                                               </ImageView>
-                                              <ImageView fx:id="imageViewStarRem5" fitHeight="70.0" fitWidth="40.0" layoutX="130.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingFive" pickOnBounds="true" preserveRatio="true">
+                                              <ImageView fx:id="imageViewStarRem5" fitHeight="70.0" fitWidth="40.0" layoutX="130.0" layoutY="10.0" onMouseClicked="#changeImageStarToRatingFiveRem" pickOnBounds="true" preserveRatio="true">
                                                   <image>
                                                       <Image url="@../SternLeer.png" />
                                                   </image>
@@ -441,7 +440,7 @@
                                                       <Insets left="20.0" top="10.0" />
                                                   </FlowPane.margin>
                                               </Button>
-                                              <Button fx:id="toFavoritelistButtonRem" mnemonicParsing="false" text="Zu Favoritenliste">
+                                              <Button fx:id="toFavoritelistButtonRem" mnemonicParsing="false" onMouseClicked="#addToFavorites2" text="Zu Favoritenliste">
                                                   <FlowPane.margin>
                                                       <Insets left="20.0" top="10.0" />
                                                   </FlowPane.margin>
