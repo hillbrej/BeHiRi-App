@@ -19,6 +19,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -71,7 +73,7 @@ public class Controller {
     public ImageView imageViewStar5;
     public Button toFavouritelistButton;
     public Button toReminderlistButton;
-    public TabPane TabPane;
+    public TabPane tabPane;
 
     public ComboBox myComboboxFav;
     public ListView myListViewFav;
@@ -95,10 +97,18 @@ public class Controller {
     public Label labelOverview;
     public ListView listViewGenres;
 
+    public ComboBox stylesheetComboBox;
+    public Label shortInfoLabel;
+
+    public String initCombo = "Klassisch";
+
     @FXML
     private void initialize() {
         myCombobox.getItems().addAll(comboBoxValues);
         myComboboxFav.getItems().addAll(comboBoxValues);
+
+        stylesheetComboBox.getItems().addAll("Klassisch", "Fanzy", "Crank");
+        stylesheetComboBox.setValue(initCombo);
         ////
         textfieldSearch.setOnKeyTyped((event) -> searchMovies(event));
         textfieldSearch.setOnAction((event) -> searchMoviesEnter());
@@ -150,6 +160,14 @@ public class Controller {
             }
         });
 
+        stylesheetComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                System.out.println("Combobox-Auswahl: " + t1);
+                loadStylesheet(t1);
+            }
+        });
+
         // Movie Objekte instanzieren
         movies = new Movies();
         favoriteMovies = new Favorites();
@@ -197,6 +215,28 @@ public class Controller {
         System.out.println("Local Path: " + localPath);
         favoriteMovies.moviesFromFile(localPath);
         favoriteList.addAll(favoriteMovies.FavMovies2List());
+    }
+
+    public void loadStylesheet(String sheet)
+    {
+        if(sheet.equals("Klassisch"))
+        {
+            tabPane.getStylesheets().clear();
+            tabPane.getStylesheets().add("Main/stylesheet.css");
+        }
+        if(sheet.equals("Fanzy"))
+        {
+            tabPane.getStylesheets().clear();
+            tabPane.getStylesheets().add("Main/stylesheet2.css");
+        }
+        if(sheet.equals("Crank"))
+        {
+            tabPane.getStylesheets().clear();
+            tabPane.getStylesheets().add("Main/stylesheet3.css");
+        }
+
+        //tabPane.setStyle("@stylesheet.css");
+        //shortInfoLabel.setStyle("-fx-font-family: sample; -fx-font-size: 80;");
     }
 
     public void setData(String... comboBoxValues) {
@@ -261,7 +301,7 @@ public class Controller {
             if (search.length() >= 2) {
                 System.out.println("Auto ver an");
 
-                TabPane.cursorProperty().setValue(Cursor.WAIT);
+                tabPane.cursorProperty().setValue(Cursor.WAIT);
                 try {
                     comboBoxYearFrom.getSelectionModel().select(null);
                     comboBoxYearTo.getSelectionModel().select(null);
@@ -330,7 +370,7 @@ public class Controller {
                 catch (Exception ex) {
                     System.out.println(ex.toString());
                 } finally {
-                    TabPane.cursorProperty().setValue(Cursor.DEFAULT);
+                    tabPane.cursorProperty().setValue(Cursor.DEFAULT);
                 }
             }
             else {

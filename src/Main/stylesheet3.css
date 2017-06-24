@@ -1,0 +1,26 @@
+.button {
+    -fx-background-color: #286090;
+    -fx-text-fill: #fff;
+        -fx-font-family: "Arial Narrow";
+        -fx-background-color: linear-gradient(#ff0000, #40e0d0);
+        -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+.button:hover {
+    -fx-background-color: linear-gradient(#40e0d0, #ff0000);
+}
+
+.label {
+-fx-text-fill: #a83;
+-fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
+
+.root {
+-fx-cursor: hand;
+-fx-border-color: darkgreen;
+-fx-border-width: 4px;
+    -fx-text-fill: sandybrown;
+    -fx-background-color: fuchsia
+}
