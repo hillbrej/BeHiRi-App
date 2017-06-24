@@ -127,6 +127,30 @@ public class Controller {
 
     @FXML
     private void initialize() {
+
+        myCombobox.setTooltip(new Tooltip("Sortieren der Sucheingabe"));
+        myListView.setTooltip(new Tooltip("Eintrag wählen um anzuzeigen"));
+        textfieldSearch.setTooltip(new Tooltip("Online suche mit THEMOVIE.db"));
+        toFavouritelistButton.setTooltip(new Tooltip("Aktueller Eintrag in Favoritenliste aufnehmen"));
+        toReminderlistButton.setTooltip(new Tooltip("Aktueller Eintrag in Merkliste aufnehemen"));
+        myComboboxFav.setTooltip(new Tooltip("Ergebnisse sortieren"));
+        myListViewFav.setTooltip(new Tooltip("Gefilterte Liste der Favoriten"));
+        textfieldSearchFav.setTooltip(new Tooltip("Favoriteneintrag suchen"));
+
+        deleteFavouritelistButtonFav.setTooltip(new Tooltip("Aktueller Eintrag aus Favoritenliste entfernen"));
+        toReminderlistButtonFav.setTooltip(new Tooltip("Aktueller Eintrag in Merkliste aufnehmen"));
+        comboBoxYearFrom.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern"));
+        comboBoxYearTo.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern"));
+        listViewGenres.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Genres sortieren"));
+        textfieldSearchRem.setTooltip(new Tooltip("Merklisteneintrag suchen"));
+        myComboboxRem.setTooltip(new Tooltip("Ergebnisse sortieren"));
+        myListViewRem.setTooltip(new Tooltip("Gefilterte Liste der Merkliste"));
+
+        deleteRemindlistButtonRem.setTooltip(new Tooltip("Aktueller Eintrag aus Merkliste entfernen"));
+        toFavoritelistButtonRem.setTooltip(new Tooltip("Aktueller Eintrag in Favoritenliste aufnehmen"));
+
+        stylesheetComboBox.setTooltip(new Tooltip("Erscheinung der Öberfläche ändern"));
+
         /*button.setTooltip(new Tooltip("Tooltip for Button"));*/
         myCombobox.getItems().addAll(comboBoxValues);
         myComboboxFav.getItems().addAll(comboBoxValues);
@@ -358,7 +382,7 @@ public class Controller {
 
             try
             {
-                Favorites.Results selectedMovie = Favorites.Results.class.cast(selectedObj);
+                Reminds.Results selectedMovie = Reminds.Results.class.cast(selectedObj);
                 if(!remindedMovies.isIdInReminders(selectedMovie.getId()))
                 {
                     remindedMovies.getReminders().add(selectedMovie);
@@ -548,13 +572,37 @@ public class Controller {
             }
         }
     }
-
+/*
+*
+* hiiiiiiiiiiiiiiiiieeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrr
+*
+* */
     public void searchMoviesFav() {
-        if (textfieldSearchFav.getText().length() >= 3) {
-            System.out.println("Auto ver an");
-        } else {
-            //System.out.println("auto aus");
+
+
+        /*ObservableList<String> placeholder;
+        placeholder = FXCollections.observableArrayList();
+
+        placeholder = favoriteList;
+
+        if(textfieldSearchFav.getText().length() != 0)
+        {
+            placeholder.clear();
+
+
+            for (String title: favoriteList)
+            {
+                System.out.println(textfieldSearchFav.getText());
+                if(title.contains(textfieldSearchFav.getText()))
+                {
+                    placeholder.add(title);
+                    System.out.println(title);
+                }
+            }
+            System.out.println(textfieldSearchFav.getText());
         }
+        */
+        
     }
 
     public void searchMoviesEnter() {
@@ -849,7 +897,7 @@ public class Controller {
 
             try
             {
-                Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+                Favorites.Results selectedMovie = Favorites.Results.class.cast(selectedObj);
                 if(!favoriteMovies.isIdInFavorites(selectedMovie.getId()))
                 {
                     favoriteMovies.getFavorites().add(selectedMovie);
