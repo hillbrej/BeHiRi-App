@@ -127,6 +127,7 @@ public class Controller {
 
     @FXML
     private void initialize() {
+        /*button.setTooltip(new Tooltip("Tooltip for Button"));*/
         myCombobox.getItems().addAll(comboBoxValues);
         myComboboxFav.getItems().addAll(comboBoxValues);
         myComboboxRem.getItems().addAll(comboBoxValues);
