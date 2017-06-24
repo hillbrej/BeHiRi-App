@@ -55,6 +55,7 @@ public class Controller {
 
     // Objekt für die Favoriten erzeugen
     Favorites favoriteMovies;
+    Reminds remindedMovies;
 
     // Filter fuer Suchliste
     // FilteredList<Movies.Results> filteredMovies;
@@ -89,6 +90,7 @@ public class Controller {
     // public TextArea textAreaDetail;
     public ImageView imageViewMovie;
     public ObservableList<String> favoriteList;
+    public ObservableList<String> remindedList;
     public Label labelDetail;
     public Label labelFavDetail;
     public ComboBox comboBoxYearFrom;
@@ -96,6 +98,20 @@ public class Controller {
     public Pane paneFavBackground;
     public Label labelOverview;
     public ListView listViewGenres;
+
+    //rem
+    public TextField textfieldSearchRem;
+    public ComboBox myComboboxRem;
+    public ListView myListViewRem;
+    public Pane paneRemBackground;
+    public Label labelRemDetail;
+    public ImageView imageViewStarRem1;
+    public ImageView imageViewStarRem2;
+    public ImageView imageViewStarRem3;
+    public ImageView imageViewStarRem4;
+    public ImageView imageViewStarRem5;
+    public Button deleteRemindlistButtonRem;
+    public Button toFavoritelistButtonRem;
 
     public ComboBox stylesheetComboBox;
     public Label shortInfoLabel;
@@ -106,6 +122,7 @@ public class Controller {
     private void initialize() {
         myCombobox.getItems().addAll(comboBoxValues);
         myComboboxFav.getItems().addAll(comboBoxValues);
+        myComboboxRem.getItems().addAll(comboBoxValues);
 
         stylesheetComboBox.getItems().addAll("Klassisch", "Fanzy", "Crank");
         stylesheetComboBox.setValue(initCombo);
@@ -116,8 +133,9 @@ public class Controller {
         // myListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
         myListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFilm());
         myListViewFav.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFavFilm());
+        myListViewRem.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showRemFilm());
         listViewGenres.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> filterGenres());
-
+/*hier*/
         myComboboxFav.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String t, String t1) {
@@ -171,6 +189,7 @@ public class Controller {
         // Movie Objekte instanzieren
         movies = new Movies();
         favoriteMovies = new Favorites();
+        remindedMovies = new Reminds();
 
         // Genre Objekt instanzieren
         genres = new MovieGenres();
@@ -180,6 +199,10 @@ public class Controller {
         myListView.itemsProperty().bind(MovieDb.moviesList);
 
         favoriteList = FXCollections.observableArrayList();
+        remindedList = FXCollections.observableArrayList();
+
+        myListViewRem.setItems(remindedList);
+        myListViewRem.itemsProperty().bind(Reminds.remList);
         myListViewFav.setItems(favoriteList);
         myListViewFav.itemsProperty().bind(Favorites.favList);
 
@@ -201,6 +224,15 @@ public class Controller {
         deleteFavouritelistButtonFav.setVisible(false);
         toReminderlistButtonFav.setVisible(false);
 
+        imageViewStarRem1.setVisible(false);
+        imageViewStarRem2.setVisible(false);
+        imageViewStarRem3.setVisible(false);
+        imageViewStarRem4.setVisible(false);
+        imageViewStarRem5.setVisible(false);
+
+        deleteRemindlistButtonRem.setVisible(false);
+        toFavoritelistButtonRem.setVisible(false);
+
         // Logos anzeigen
         paneFavBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
         paneFavBackground.setPrefWidth(312);
@@ -208,13 +240,82 @@ public class Controller {
         paneFavBackground.setMinHeight(276);
         paneFavBackground.setMinWidth(312);
 
+        paneRemBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
+        paneRemBackground.setPrefWidth(312);
+        paneRemBackground.setPrefHeight(276);
+        paneRemBackground.setMinHeight(276);
+        paneRemBackground.setMinWidth(312);
+
         Image imageStart = new Image("movieDbLogo.png");
         imageViewMovie.setImage(imageStart);
 
         // Bishergie Favoriten aus Lister importieren
         System.out.println("Local Path: " + localPath);
+
+        remindedMovies.moviesFromFile(localPath);
+        remindedList.addAll(remindedMovies.RemMovies2List());
         favoriteMovies.moviesFromFile(localPath);
         favoriteList.addAll(favoriteMovies.FavMovies2List());
+    }
+
+    public void searchMoviesRem(){}
+    public void deleteFromReminder(){}
+    public void addToReminded(){
+        Object selectedObj = myListView.getSelectionModel().getSelectedItem();
+
+        if (selectedObj != null)
+        {
+            String title = myListView.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Film " + title + " wird zur Merkliste hinzugefuegt");
+
+            try
+            {
+                Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+                if(!remindedMovies.isIdInReminders(selectedMovie.getId()))
+                {
+                    remindedMovies.getReminders().add(selectedMovie);
+                    remindedMovies.addReminders(selectedMovie);
+                    remindedMovies.Movies2File(localPath);
+                }
+                else
+                    System.out.println("Ausgewaehlter Fiml schon in Merk enthalten");
+            }
+            catch(Exception ex)
+            {
+                System.out.println("Fehler beim Hinzufuegen der Favoriten: " + ex.getMessage());
+            }
+        }
+        else
+            System.out.println("Objekt konnte nicht aus Liste ermittelt werden");
+    }
+
+    public void addToReminded2(){
+        Object selectedObj = myListViewFav.getSelectionModel().getSelectedItem();
+
+        if (selectedObj != null)
+        {
+            String title = myListViewFav.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Film " + title + " wird zur Merkliste hinzugefuegt");
+
+            try
+            {
+                Favorites.Results selectedMovie = Favorites.Results.class.cast(selectedObj);
+                if(!remindedMovies.isIdInReminders(selectedMovie.getId()))
+                {
+                    remindedMovies.getReminders().add(selectedMovie);
+                    remindedMovies.addReminders(selectedMovie);
+                    remindedMovies.Movies2File(localPath);
+                }
+                else
+                    System.out.println("Ausgewaehlter Fiml schon in Merk enthalten");
+            }
+            catch(Exception ex)
+            {
+                System.out.println("Fehler beim Hinzufuegen der Favoriten: " + ex.getMessage());
+            }
+        }
+        else
+            System.out.println("Objekt konnte nicht aus Liste ermittelt werden");
     }
 
     public void loadStylesheet(String sheet)
@@ -789,6 +890,123 @@ public class Controller {
                         changeImageStarToFullFav3();
                         changeImageStarToFullFav4();
                         changeImageStarToFullFav5();
+                        break;
+                    default:
+                }
+            }
+            catch(Exception ex)
+            {
+                System.out.println("Fehler beim Abfragen der Filme aus dem Movie Objekt: " + ex.getMessage());
+            }
+        }
+        else
+        {
+            System.out.println("Fehler beim Einlesen des Objekts aus der Suchliste");
+        }
+    }
+/////////hier
+    public void showRemFilm() {
+        int rating = -1;
+
+        Object selectedObj = myListViewRem.getSelectionModel().getSelectedItem();
+
+        if(selectedObj != null) {
+            String selectedTitle = myListViewRem.getSelectionModel().getSelectedItem().toString();
+            System.out.println("Ausgewaehlter Film: " + selectedTitle);
+
+            labelRemDetail.setText(null);
+
+            imageViewStarRem1.setVisible(true);
+            imageViewStarRem2.setVisible(true);
+            imageViewStarRem3.setVisible(true);
+            imageViewStarRem4.setVisible(true);
+            imageViewStarRem5.setVisible(true);
+
+            deleteRemindlistButtonRem.setVisible(true);
+            toFavoritelistButtonRem.setVisible(true);
+
+            // Erstmal die Sterne wieder ablöschen
+            Image myImageStar = new Image("SternLeer.png");
+
+            imageViewStarRem1.setImage(myImageStar);
+            imageViewStarRem2.setImage(myImageStar);
+            imageViewStarRem3.setImage(myImageStar);
+            imageViewStarRem4.setImage(myImageStar);
+            imageViewStarRem5.setImage(myImageStar);
+            /*changeImageStarToEmptyRem();
+            changeImageStarToEmptyRem2();
+            changeImageStarToEmptyRem3();
+            changeImageStarToEmptyRem4();
+            changeImageStarToEmptyRem5();*/
+///////hier
+            Movies.Results selectedMovie = Movies.Results.class.cast(selectedObj);
+
+            deleteFavouritelistButtonFav.setVisible(true);
+            toReminderlistButtonFav.setVisible(true);
+
+            try {
+                String movieDetail = remindedMovies.showDetails(selectedMovie, genres);
+                String movieUrl = remindedMovies.getMovieUrl(selectedMovie);
+
+                if(movieUrl != null && movieUrl.length() > 0)
+                {
+                    Image image = new Image("https://image.tmdb.org/t/p/w500" + movieUrl);
+
+                    paneRemBackground.setPrefHeight(image.getHeight() / 1.0);
+                    paneRemBackground.setPrefWidth(image.getWidth() / 1.0);
+
+                    labelRemDetail.setMaxWidth(image.getWidth());
+                    labelRemDetail.setMinWidth(image.getWidth());
+                    labelRemDetail.setMinHeight(image.getHeight());
+                    labelRemDetail.setMaxHeight(image.getHeight());
+
+                    paneRemBackground.setStyle("-fx-background-image: " + "url(https://image.tmdb.org/t/p/w500" + movieUrl + ");");
+                }
+                else
+                {
+                    paneRemBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
+                    paneRemBackground.setPrefWidth(312);
+                    paneRemBackground.setPrefHeight(276);
+                    paneRemBackground.setMinHeight(276);
+                    paneRemBackground.setMinWidth(312);
+                }
+
+                labelRemDetail.setText(movieDetail);
+                labelRemDetail.setStyle("-fx-background-color: rgba(211, 211, 211, 0.6);");
+
+                // Rating (Sterne) der Filme anzeigen
+                rating = remindedMovies.getFavRating(selectedMovie);
+
+                Image myImageStar2 = new Image("SternVoll.png");
+
+                switch (rating) {
+                    case 1:
+                        imageViewStarRem1.setImage(myImageStar2);
+                        //changeImageStarToFullFav();
+                        break;
+                    case 2:
+                        imageViewStarRem1.setImage(myImageStar2);
+                        imageViewStarRem2.setImage(myImageStar2);
+                        //changeImageStarToFullFav();
+                        //changeImageStarToFullFav2();
+                        break;
+                    case 3:
+                        imageViewStarRem1.setImage(myImageStar2);
+                        imageViewStarRem2.setImage(myImageStar2);
+                        imageViewStarRem3.setImage(myImageStar2);
+                        break;
+                    case 4:
+                        imageViewStarRem1.setImage(myImageStar2);
+                        imageViewStarRem2.setImage(myImageStar2);
+                        imageViewStarRem3.setImage(myImageStar2);
+                        imageViewStarRem4.setImage(myImageStar2);
+                        break;
+                    case 5:
+                        imageViewStarRem1.setImage(myImageStar2);
+                        imageViewStarRem2.setImage(myImageStar2);
+                        imageViewStarRem3.setImage(myImageStar2);
+                        imageViewStarRem4.setImage(myImageStar2);
+                        imageViewStarRem5.setImage(myImageStar2);
                         break;
                     default:
                 }
