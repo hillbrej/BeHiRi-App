@@ -15,7 +15,7 @@ public class Main extends Application {
         //root.getStylesheets().add("Main/stylesheet.css");
         //root.getStylesheets().add("Main/stylesheet2.css");//style laden am anfang
         primaryStage.setTitle("BeHiRi-App");
-        //primaryStage.getIcons().add(new Image("C:/Users/Beier/Desktop/favicon(3).ico"));
+        primaryStage.getIcons().add(new Image("BeHiRi.ico"));
         //primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("C:/Users/Beier/Desktop/favicon(3).ico")));
         primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root, 800, 550));
