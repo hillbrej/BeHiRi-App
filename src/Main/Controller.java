@@ -245,6 +245,8 @@ public class Controller {
         favoriteList = FXCollections.observableArrayList();
         remindedList = FXCollections.observableArrayList();
 
+
+
         myListViewRem.setItems(remindedList);
         myListViewRem.itemsProperty().bind(Reminds.remList);
         myListViewFav.setItems(favoriteList);
@@ -311,8 +313,35 @@ public class Controller {
         favoriteMovies.moviesFromFile(localPath);
         favoriteList.addAll(favoriteMovies.FavMovies2List());
     }
+////////
 
-    public void searchMoviesRem(){}
+
+    public void searchMoviesRem(){
+        tabPane.cursorProperty().setValue(Cursor.WAIT);
+
+        /*FilteredList<String> filteredData = new FilteredList<>(remindedList, p -> true);
+
+        filteredData.setPredicate(title -> {
+            if(title.toLowerCase().contains(textfieldSearchRem.getText().toLowerCase()))
+                return true;
+            else
+                return false;
+            });
+
+        Reminds.remList.filtered(title -> {
+            if(title.contains(textfieldSearchRem.getText().toLowerCase()))
+                return true;
+            else
+                return false;
+        });
+
+            myListViewRem.setItems(filteredData);
+        //remindedList.removeIf()
+        //myListViewRem.setItems(filteredData);
+
+        tabPane.cursorProperty().setValue(Cursor.DEFAULT);*/
+    }
+    ///////////////////////////
     public void deleteFromReminder(){
         try
         {
@@ -579,29 +608,27 @@ public class Controller {
 * */
     public void searchMoviesFav() {
 
+        /*tabPane.cursorProperty().setValue(Cursor.WAIT);
 
-        /*ObservableList<String> placeholder;
-        placeholder = FXCollections.observableArrayList();
+        if(textfieldSearchFav.getText().length()>0) {
+            ObservableList<String> placeholder = FXCollections.observableArrayList();
 
-        placeholder = favoriteList;
+            for (String title : favoriteList) {
 
-        if(textfieldSearchFav.getText().length() != 0)
-        {
-            placeholder.clear();
-
-
-            for (String title: favoriteList)
-            {
-                System.out.println(textfieldSearchFav.getText());
-                if(title.contains(textfieldSearchFav.getText()))
-                {
+                if (title.toLowerCase().contains(textfieldSearchFav.getText().toLowerCase())) {
+                    //System.out.println(title);
                     placeholder.add(title);
-                    System.out.println(title);
                 }
             }
-            System.out.println(textfieldSearchFav.getText());
+            myListViewFav.getItems().clear();
+            myListViewFav.getItems().addAll(placeholder);
         }
-        */
+        else
+        {
+            myListViewFav.getItems().clear();
+            myListViewFav.getItems().addAll(remindedList);
+        }
+        tabPane.cursorProperty().setValue(Cursor.DEFAULT);*/
         
     }
 

@@ -195,7 +195,7 @@
                                             <Insets left="20.0" top="5.0" />
                                         </FlowPane.margin>
                                     </Label>
-                                    <TextField fx:id="textfieldSearchFav" onInputMethodTextChanged="#searchMoviesFav" onKeyTyped="#searchMoviesFav">
+                                    <TextField fx:id="textfieldSearchFav" onKeyReleased="#searchMoviesFav">
                                         <FlowPane.margin>
                                             <Insets left="10.0" top="5.0" />
                                         </FlowPane.margin>
@@ -331,7 +331,7 @@
                                               <Insets left="20.0" top="5.0" />
                                           </FlowPane.margin>
                                       </Label>
-                                      <TextField fx:id="textfieldSearchRem" onInputMethodTextChanged="#searchMoviesRem" onKeyTyped="#searchMoviesRem">
+                                      <TextField fx:id="textfieldSearchRem" onKeyReleased="#searchMoviesRem">
                                           <FlowPane.margin>
                                               <Insets left="10.0" top="5.0" />
                                           </FlowPane.margin>
