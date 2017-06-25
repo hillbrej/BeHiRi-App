@@ -30,9 +30,6 @@ public class Reminds extends Movies
         this.reminders = reminders;
     }
 
-
-
-
     public void moviesFromFile(String path) {
         Reader fr = null;
         Results[] reminderArray = new Results[]{};
@@ -190,9 +187,24 @@ public class Reminds extends Movies
     }
 
     public boolean isIdInReminders(int id) {//isIdInFavorites
-        if(reminderIds.contains(id))
-            return true;
+        for(Results item : reminders) {
+            if (item.getId() == id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void filterRemMoviesByTitle(String title, boolean noFilter) {
+        if(!noFilter) {
+            ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.reminders).filtered(s -> (s.getTitle().toLowerCase().contains(title))));
+            remList.setValue(obsMovieList);
+        }
         else
-            return false;
+        {
+            ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.reminders).filtered(s -> true));
+            remList.setValue(obsMovieList);
+        }
     }
 }

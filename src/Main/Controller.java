@@ -140,9 +140,9 @@ public class Controller {
 
         deleteFavouritelistButtonFav.setTooltip(new Tooltip("Aktueller Eintrag aus Favoritenliste entfernen"));
         toReminderlistButtonFav.setTooltip(new Tooltip("Aktueller Eintrag in Merkliste aufnehmen"));
-        comboBoxYearFrom.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern"));
-        comboBoxYearTo.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern"));
-        choiceBoxGenres.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Genres sortieren"));
+        comboBoxYearFrom.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern\nAchtung! Es ist immer nur einer der beiden Filter aktiv!"));
+        comboBoxYearTo.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern\nAchtung! Es ist immer nur einer der beiden Filter aktiv!"));
+        choiceBoxGenres.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Genre filtern\nAchtung! Es ist immer nur einer der beiden Filter aktiv!"));
         textfieldSearchRem.setTooltip(new Tooltip("Merklisteneintrag suchen"));
         myComboboxRem.setTooltip(new Tooltip("Ergebnisse sortieren"));
         myListViewRem.setTooltip(new Tooltip("Gefilterte Liste der Merkliste"));
@@ -160,7 +160,7 @@ public class Controller {
         stylesheetComboBox.getItems().addAll("Klassisch", "Fanzy", "Crank");
         stylesheetComboBox.setValue(initCombo);
         ////
-        textfieldSearch.setOnKeyTyped((event) -> searchMovies(event));
+        // textfieldSearch.setOnKeyTyped((event) -> searchMovies(event));
         textfieldSearch.setOnAction((event) -> searchMoviesEnter());
 
         // myListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -335,7 +335,20 @@ public class Controller {
 
     }
 
-    public void searchMoviesRem(){}
+    public void searchMoviesRem(){
+        String title = "";
+
+        title = textfieldSearchRem.getText();
+
+        if (title.length() >= 1) {
+            title = title.toLowerCase();
+            System.out.println("Filtern nach: " + title);
+            remindedMovies.filterRemMoviesByTitle(title,false);
+        } else {
+            remindedMovies.filterRemMoviesByTitle(title,true);
+        }
+
+    }
     public void deleteFromReminder(){
         try
         {
@@ -559,30 +572,17 @@ public class Controller {
 *
 * */
     public void searchMoviesFav() {
+        String title = "";
 
+        title = textfieldSearchFav.getText();
 
-        /*ObservableList<String> placeholder;
-        placeholder = FXCollections.observableArrayList();
-
-        placeholder = favoriteList;
-
-        if(textfieldSearchFav.getText().length() != 0)
-        {
-            placeholder.clear();
-
-
-            for (String title: favoriteList)
-            {
-                System.out.println(textfieldSearchFav.getText());
-                if(title.contains(textfieldSearchFav.getText()))
-                {
-                    placeholder.add(title);
-                    System.out.println(title);
-                }
-            }
-            System.out.println(textfieldSearchFav.getText());
+        if (title.length() >= 1) {
+            title = title.toLowerCase();
+            System.out.println("Filtern nach: " + title);
+            favoriteMovies.filterFavMoviesByTitle(title,false);
+        } else {
+            favoriteMovies.filterFavMoviesByTitle(title,true);
         }
-        */
         
     }
 
@@ -1194,6 +1194,13 @@ public class Controller {
         Image starfull = new Image("SternVoll.png");
         //changeImageStarToFullFav();
         imageViewStarRem1.setImage(starfull);
+
+        Image starempty = new Image("SternLeer.png");
+        imageViewStarRem2.setImage(starempty);
+        imageViewStarRem3.setImage(starempty);
+        imageViewStarRem4.setImage(starempty);
+        imageViewStarRem5.setImage(starempty);
+
     }
     public void changeImageStarToRatingTwo() {
         changeImageStarToRating(2);
@@ -1207,6 +1214,11 @@ public class Controller {
         //changeImageStarToFullFav2();
         imageViewStarRem1.setImage(starfull);
         imageViewStarRem2.setImage(starfull);
+
+        Image starempty = new Image("SternLeer.png");
+        imageViewStarRem3.setImage(starempty);
+        imageViewStarRem4.setImage(starempty);
+        imageViewStarRem5.setImage(starempty);
     }
     public void changeImageStarToRatingThree() {
         changeImageStarToRating(3);
@@ -1223,6 +1235,10 @@ public class Controller {
         imageViewStarRem1.setImage(starfull);
         imageViewStarRem2.setImage(starfull);
         imageViewStarRem3.setImage(starfull);
+
+        Image starempty = new Image("SternLeer.png");
+        imageViewStarRem4.setImage(starempty);
+        imageViewStarRem5.setImage(starempty);
     }
     public void changeImageStarToRatingFour() {
         changeImageStarToRating(4);
@@ -1242,6 +1258,9 @@ public class Controller {
         imageViewStarRem2.setImage(starfull);
         imageViewStarRem3.setImage(starfull);
         imageViewStarRem4.setImage(starfull);
+
+        Image starempty = new Image("SternLeer.png");
+        imageViewStarRem5.setImage(starempty);
     }
     public void changeImageStarToRatingFive() {
         changeImageStarToRating(5);

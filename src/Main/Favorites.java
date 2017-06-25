@@ -188,10 +188,15 @@ public class Favorites extends Movies {
     }
 
     public boolean isIdInFavorites(int id) {
-        if(favoriteIds.contains(id))
-            return true;
-        else
-            return false;
+
+        for(Results item : favorites) {
+            if (item.getId() == id) {
+                return true;
+            }
+        }
+
+        return false;
+
     }
 
     public void filterFavMoviesByTitle(String title, boolean noFilter) {

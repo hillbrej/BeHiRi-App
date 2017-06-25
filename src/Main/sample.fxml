@@ -125,9 +125,11 @@
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.0" minWidth="10.0" prefWidth="123.0" />
                                       </columnConstraints>
                                       <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
                                           <ComboBox fx:id="comboBoxYearFrom" minHeight="25.0" minWidth="90.0" prefHeight="25.0" prefWidth="90.0" GridPane.rowIndex="1">
@@ -171,12 +173,12 @@
                                                 <Insets left="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <ChoiceBox fx:id="choiceBoxGenres" minHeight="25.0" minWidth="90.0" prefHeight="25.0" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <ChoiceBox fx:id="choiceBoxGenres" minHeight="25.0" minWidth="110.0" prefHeight="25.0" prefWidth="110.0" GridPane.rowIndex="4">
                                              <GridPane.margin>
-                                                <Insets left="30.0" />
+                                                <Insets left="10.0" />
                                              </GridPane.margin>
                                           </ChoiceBox>
-                                          <Label fx:id="genreLabel" text="Filtern nach Genre:" GridPane.rowIndex="2">
+                                          <Label fx:id="genreLabel" text="Filtern nach Genre:" GridPane.rowIndex="3">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
@@ -205,7 +207,7 @@
                                             <Insets left="20.0" top="5.0" />
                                         </FlowPane.margin>
                                     </Label>
-                                    <TextField fx:id="textfieldSearchFav" onInputMethodTextChanged="#searchMoviesFav" onKeyTyped="#searchMoviesFav">
+                                    <TextField fx:id="textfieldSearchFav" onKeyReleased="#searchMoviesFav">
                                         <FlowPane.margin>
                                             <Insets left="10.0" top="5.0" />
                                         </FlowPane.margin>
@@ -341,7 +343,7 @@
                                               <Insets left="20.0" top="5.0" />
                                           </FlowPane.margin>
                                       </Label>
-                                      <TextField fx:id="textfieldSearchRem" onInputMethodTextChanged="#searchMoviesRem" onKeyTyped="#searchMoviesRem">
+                                      <TextField fx:id="textfieldSearchRem" onKeyReleased="#searchMoviesRem">
                                           <FlowPane.margin>
                                               <Insets left="10.0" top="5.0" />
                                           </FlowPane.margin>
@@ -473,20 +475,20 @@
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="666.0" minWidth="10.0" prefWidth="619.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="119.0" minHeight="0.0" prefHeight="46.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="248.0" minHeight="0.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="177.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="180.0" minHeight="10.0" prefHeight="180.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="Entwicklerteam:" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
-                        <Insets top="20.0" />
+                        <Insets />
                      </GridPane.margin></Label>
                   <Label text="Jonas Hillbrecht und Fabian Beier" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <GridPane.margin>
-                        <Insets top="20.0" />
+                        <Insets />
                      </GridPane.margin></Label>
                   <Label text="Benutzte Datenbank:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
@@ -497,8 +499,8 @@
                   <Label text="Stylesheet:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <ComboBox fx:id="stylesheetComboBox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <Label fx:id="shortInfoLabel" text="Kurzinfo:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label text="Die BeHiRi-App ist für die Verwaltung der Filminteressen von Filmefans gedacht, viel Spaß damit" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <Label text="BeHiRi-App" GridPane.columnIndex="1">
+                  <Label text="Die BeHiRi-App ist eine Anwendung zur Verwaltung von Filmen für Film-Fans gedacht, viel Spaß damit!!!" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <Label text="BeHiRi-App, Version 1.0" GridPane.columnIndex="1">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>

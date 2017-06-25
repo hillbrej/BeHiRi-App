@@ -182,8 +182,8 @@ public class MovieDb implements Runnable {
 
         List<Integer> selectedMovieIds = new ArrayList<>();
 
-
-        // Genres abfragen -> wenn selectedGenres als Liste Obeservable<String> selectedGenres uebergeben wurde
+        if(selectedGenres != "-Alle Genres-") {
+            // Genres abfragen -> wenn selectedGenres als Liste Obeservable<String> selectedGenres uebergeben wurde
         /*for(String genreString : selectedGenres) {
             for (int i = 0; i < genresObj.genres.length; i++) {
                 if (genreString == genresObj.genres[i].getName())
@@ -191,15 +191,22 @@ public class MovieDb implements Runnable {
             }
         }*/
 
-        for (int i = 0; i < genresObj.genres.length; i++) {
-            if (selectedGenres == genresObj.genres[i].getName())
-                selectedMovieIds.add(genresObj.genres[i].getId());
+            for (int i = 0; i < genresObj.genres.length; i++) {
+                if (selectedGenres == genresObj.genres[i].getName())
+                    selectedMovieIds.add(genresObj.genres[i].getId());
+            }
+
+            Collection<Integer> collection = new ArrayList<Integer>(selectedMovieIds);
+
+            ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> (s.searchInGenreIds(selectedMovieIds))));
+            moviesList.setValue(obsMovieList);
+        }
+        else
+        {
+            ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(null));
+            moviesList.setValue(obsMovieList);
         }
 
-        Collection<Integer> collection = new ArrayList<Integer>(selectedMovieIds);
-
-        ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> (s.searchInGenreIds(selectedMovieIds))));
-        moviesList.setValue(obsMovieList);
 
     }
 
