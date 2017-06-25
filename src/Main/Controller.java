@@ -97,7 +97,7 @@ public class Controller {
     public ComboBox comboBoxYearTo;
     public Pane paneFavBackground;
     public Label labelOverview;
-    public ListView listViewGenres;
+    public ChoiceBox choiceBoxGenres;
 
     //rem
     public TextField textfieldSearchRem;
@@ -120,6 +120,7 @@ public class Controller {
     public Label listingLabel;
     public Label fromLabel;
     public Label toLabel;
+    public Label genreLabel;
 
 
 
@@ -141,7 +142,7 @@ public class Controller {
         toReminderlistButtonFav.setTooltip(new Tooltip("Aktueller Eintrag in Merkliste aufnehmen"));
         comboBoxYearFrom.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern"));
         comboBoxYearTo.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Erscheinungsdatum filtern"));
-        listViewGenres.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Genres sortieren"));
+        choiceBoxGenres.setTooltip(new Tooltip("Aktuelle Ergebnisse nach Genres sortieren"));
         textfieldSearchRem.setTooltip(new Tooltip("Merklisteneintrag suchen"));
         myComboboxRem.setTooltip(new Tooltip("Ergebnisse sortieren"));
         myListViewRem.setTooltip(new Tooltip("Gefilterte Liste der Merkliste"));
@@ -166,7 +167,7 @@ public class Controller {
         myListView.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFilm());
         myListViewFav.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showFavFilm());
         myListViewRem.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> showRemFilm());
-        listViewGenres.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> filterGenres());
+
 /*hier*/
 
         myComboboxRem.valueProperty().addListener(new ChangeListener<String>() {
@@ -230,6 +231,14 @@ public class Controller {
             }
         });
 
+        choiceBoxGenres.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                System.out.println("Combobox-Auswahl: " + t1);
+                filterGenres(t1);
+            }
+        });
+
         // Movie Objekte instanzieren
         movies = new Movies();
         favoriteMovies = new Favorites();
@@ -238,6 +247,8 @@ public class Controller {
         // Genre Objekt instanzieren
         genres = new MovieGenres();
         genres = movieDb.ApiQueryGenres();
+        // Werte aus Liste in Hashmap schreiben
+        genres.fromListToHashmap();
 
         // listView mit MovieListe aus Klasse verbinden
         myListView.itemsProperty().bind(MovieDb.moviesList);
@@ -281,11 +292,12 @@ public class Controller {
         listingLabel.setVisible(false);
         fromLabel.setVisible(false);
         toLabel.setVisible(false);
+        genreLabel.setVisible(false);
 
         comboBoxYearFrom.setVisible(false);
         comboBoxYearTo.setVisible(false);
 
-        listViewGenres.setVisible(false);
+        choiceBoxGenres.setVisible(false);
 
         // Logos anzeigen
         paneFavBackground.setStyle("-fx-background-image: url(movieDbLogo.png);");
@@ -310,6 +322,17 @@ public class Controller {
         remindedList.addAll(remindedMovies.RemMovies2List());
         favoriteMovies.moviesFromFile(localPath);
         favoriteList.addAll(favoriteMovies.FavMovies2List());
+
+        // Combobox mit Genres fuellen
+        choiceBoxGenres.getItems().add("-Alle Genres-");
+
+        for(MovieGenres.Genres item : genres.genres)
+        {
+            choiceBoxGenres.getItems().add((item.getName()));
+        }
+
+        choiceBoxGenres.getItems().sort(Comparator.naturalOrder());
+
     }
 
     public void searchMoviesRem(){}
@@ -473,11 +496,12 @@ public class Controller {
                 listingLabel.setVisible(true);
                 fromLabel.setVisible(true);
                 toLabel.setVisible(true);
+                genreLabel.setVisible(true);
 
                 comboBoxYearFrom.setVisible(true);
                 comboBoxYearTo.setVisible(true);
 
-                listViewGenres.setVisible(true);
+                choiceBoxGenres.setVisible(true);
 
             } catch (Exception ex) {
                 System.out.print("Fehler beim Anzeigen der Filmdetails: " + ex.getMessage());
@@ -516,49 +540,6 @@ public class Controller {
                     exeService.shutdown();
                     exeService.awaitTermination(200, TimeUnit.MILLISECONDS);
                     System.out.println("exeService: " + exeService.toString());
-
-                    // Vorhandene Jahre der Filme ermitteln und in Comboboxen schreiben
-                    /*
-                    comboBoxYearFrom.setItems(null);
-
-                    comboBoxYearFrom.setItems(null);
-
-                    years = movieDb.getMovies().getYearsofMovies();
-                    years.sort(Comparator.naturalOrder());
-
-                    for(int item : years)
-                    {
-                        if(!years.contains(item) && item !=0)
-                            yearsToList.add(Integer.toString(item));
-                    }
-
-                    // comboBoxYearFrom.setItems(FXCollections.observableArrayList(yearsToList));
-                    // comboBoxYearTo.setItems(FXCollections.observableArrayList(yearsToList));
-
-                    comboBoxYearFrom.getItems().addAll(yearsToList);
-                    comboBoxYearTo.getItems().addAll(yearsToList);
-
-
-                    /*for (String item : years) {
-                        if (!comboBoxYearFrom.getItems().contains(item)) {
-                            comboBoxYearFrom.getItems().add(item);
-                            comboBoxYearTo.getItems().add(item);
-                        }
-                    }*/
-
-                    // Erstes bzw. letztes Element auswaehlen
-                    // if(comboBoxYearFrom.getItems().size() > 0)
-                    //   comboBoxYearFrom.getSelectionModel().select(0);
-
-                    // if(comboBoxYearTo.getItems().size() > 1)
-                    //    comboBoxYearTo.getSelectionModel().select(comboBoxYearTo.getItems().size() - 1);
-
-                    // Combobox mit Genres fuellen
-                    for(MovieGenres.Genres item : genres.genres)
-                    {
-                        //choiceBoxGenres.getItems().add(item.getName());
-                        listViewGenres.getItems().add(item.getName());
-                    }
 
                 }
                 catch (Exception ex) {
@@ -1349,7 +1330,7 @@ public class Controller {
             try
             {
                System.out.println("Filter zwischen " + yearFromInt + " und " + yearToInt);
-                movieDb.filterMovies(yearFromInt, yearToInt);
+                movieDb.filterMoviesByYear(yearFromInt, yearToInt);
             }
             catch (Exception ex) {
                     System.out.println("Exception beim Filtern der Filme: " + ex.getMessage());
@@ -1360,15 +1341,22 @@ public class Controller {
 
     }
 
-    public void filterGenres() {
+    public void filterGenres(String selectedItem) {
 
-        Object selectedObj = listViewGenres.getSelectionModel().getSelectedItem();
+        Object selectedObj = choiceBoxGenres.getSelectionModel().getSelectedItem();
 
         if (selectedObj != null) {
-            String selectedGenre = listViewGenres.getSelectionModel().getSelectedItem().toString();
+            String selectedGenre = selectedItem;
             System.out.println("Ausgewaehltes Genre: " + selectedGenre);
+            try
+            {
+                // ObservableList<String> selectedGenres = choiceBoxGenres.getSelectionModel().getSelectedItems();
+                movieDb.filterMoviesByGenres(selectedGenre,genres);
+            }
+            catch (Exception ex) {
+                System.out.println("Exception beim Filtern der Filme: " + ex.getMessage());
+            }
 
         }
     }
-
 }

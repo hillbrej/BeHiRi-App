@@ -3,6 +3,7 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -170,7 +171,16 @@
                                                 <Insets left="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <ListView fx:id="listViewGenres" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <ChoiceBox fx:id="choiceBoxGenres" minHeight="25.0" minWidth="90.0" prefHeight="25.0" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets left="30.0" />
+                                             </GridPane.margin>
+                                          </ChoiceBox>
+                                          <Label fx:id="genreLabel" text="Filtern nach Genre:" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
                                        </children>
                                     </GridPane>
                                  </children></FlowPane>
@@ -470,9 +480,14 @@
                   <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="108.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Entwicklerteam:" GridPane.columnIndex="1" />
-                  <Label text="Jonas Hilbrecht" GridPane.columnIndex="2" />
-                  <Label text="Fabian Beier" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label text="Entwicklerteam:" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets top="20.0" />
+                     </GridPane.margin></Label>
+                  <Label text="Jonas Hillbrecht und Fabian Beier" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets top="20.0" />
+                     </GridPane.margin></Label>
                   <Label text="Benutzte Datenbank:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <image>
@@ -483,6 +498,11 @@
                   <ComboBox fx:id="stylesheetComboBox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <Label fx:id="shortInfoLabel" text="Kurzinfo:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <Label text="Die BeHiRi-App ist für die Verwaltung der Filminteressen von Filmefans gedacht, viel Spaß damit" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <Label text="BeHiRi-App" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Label>
                </children>
             </GridPane>
          </content>

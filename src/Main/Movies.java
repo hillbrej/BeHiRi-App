@@ -1,6 +1,8 @@
 package Main;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.IntBinaryOperator;
 
@@ -104,6 +106,22 @@ public class Movies {
             this.releaseYear = releaseYear;
         }
 
+        public boolean searchInGenreIds(List<Integer> list) {
+            boolean merker = false;
+
+            for(int id : genre_ids) {
+                if (list.contains(id)) {
+                    merker = true;
+                }
+            }
+
+            if(merker)
+                return true;
+            else
+                return false;
+
+        }
+
         // Overrides fuer toString-Methode
         @Override
         public String toString() {
@@ -183,7 +201,7 @@ public class Movies {
         return output;
     }
 
-    public String showDetails(Results movie, MovieGenres genresIds) {
+    public String showDetails(Results movie, MovieGenres genresObj) {
         String output = "";
         String genres = "";
 
@@ -198,13 +216,9 @@ public class Movies {
                 output = output + "Erscheinungsjahr:\t" + movie.getRelease_date() + "\n";
 
             // Genres abfragen
-            for (int j = 0; j < movie.getGenre_ids().length; j++) {
-                for (int k = 0; k < genresIds.genres.length; k++) {
-                    if (genresIds.genres[k].getId() == movie.getGenre_ids()[j]) {
-                        genres = genres + " - " + genresIds.genres[k].getName() + "\n\t\t\t\t";
-                        break;
-                    }
-                }
+            for(int genreIds : movie.getGenre_ids())
+            {
+                genres = genres + genresObj.genreMap.get(genreIds) + "\n\t\t\t\t";
             }
 
             if(genres != null && genres.length() > 0)
@@ -218,13 +232,13 @@ public class Movies {
         return output;
     }
 
-    public String showDetailsWithoutOverview(Results movie, MovieGenres genresIds) {
+    public String showDetailsWithoutOverview(Results movie, MovieGenres genresObj) {
         String output = "";
         String genres = "";
 
         if (movie != null) {
             if(movie.getTitle() != null && movie.getTitle().length() > 0)
-                output = "Titel:\t\t\t\t" + movie.getTitle() + "\n\n";
+                output = "Titel:\t\t\t" + movie.getTitle() + "\n\n";
 
             if(movie.getOriginal_title() != null && movie.getOriginal_title().length() > 0)
                 output = output + "Originaltitel:\t\t" + movie.getOriginal_title() + "\n";
@@ -233,13 +247,9 @@ public class Movies {
                 output = output + "Erscheinungsjahr:\t" + movie.getRelease_date() + "\n";
 
             // Genres abfragen
-            for (int j = 0; j < movie.getGenre_ids().length; j++) {
-                for (int k = 0; k < genresIds.genres.length; k++) {
-                    if (genresIds.genres[k].getId() == movie.getGenre_ids()[j]) {
-                        genres = genres + " - " + genresIds.genres[k].getName() + "\n\t\t\t\t";
-                        break;
-                    }
-                }
+            for(int genreIds : movie.getGenre_ids())
+            {
+                genres = genres + genresObj.genreMap.get(genreIds) + "\n\t\t\t\t";
             }
 
             if(genres != null && genres.length() > 0)
