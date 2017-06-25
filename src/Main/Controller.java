@@ -160,7 +160,7 @@ public class Controller {
         stylesheetComboBox.getItems().addAll("Klassisch", "Fanzy", "Crank");
         stylesheetComboBox.setValue(initCombo);
         ////
-        // textfieldSearch.setOnKeyTyped((event) -> searchMovies(event));
+        textfieldSearch.setOnKeyTyped((event) -> searchMovies(event));
         textfieldSearch.setOnAction((event) -> searchMoviesEnter());
 
         // myListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
