@@ -33,7 +33,6 @@ public class Reminds extends Movies
     public void moviesFromFile(String path) {
         Reader fr = null;
         Results[] reminderArray = new Results[]{};
-
         try {
             fr = new FileReader(path + "\\fileWriterRemind.json");
 
