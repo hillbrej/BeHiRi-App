@@ -7,9 +7,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -20,7 +18,6 @@ import java.net.URL;
 // Klasse MovieDb fuer den API-Zugriff auf themoviedb.org
 public class MovieDb implements Runnable {
     public static int counter = 0;
-    // public static ListProperty<String> moviesList = new SimpleListProperty<>();
     public static ListProperty<Movies.Results> moviesList = new SimpleListProperty<>();
     public static ListProperty<Movies.Results> backupMoviesList = new SimpleListProperty<>();
     public static ListProperty<String> yearsFrom = new SimpleListProperty<>();
@@ -162,17 +159,6 @@ public class MovieDb implements Runnable {
             URL url = new URI("https", this.host, this.pathGenreSearch, queryString, null).toURL();
             Reader reader = new InputStreamReader(url.openStream()); // Stream für den Inhalt an URL öffnen
 
-            // Ausgabe vom reader - ! Nach Auslesen ist reader auf null !
-            /*
-            System.out.println("Ausgabe von reader:");
-            int i = 0;
-            while(i != -1)
-            {
-                i = reader.read();
-                System.out.print((char) i);
-            }
-            */
-
             // Zuweisung über GSON
             MovieGenres genres = new Gson().fromJson(reader, MovieGenres.class);
             return  genres;
@@ -187,9 +173,34 @@ public class MovieDb implements Runnable {
 
     }
 
-    public void filterMovies(int yearFrom, int yearTo) {
+    public void filterMoviesByYear(int yearFrom, int yearTo) {
         ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> (s.getReleaseYear() >= yearFrom && s.getReleaseYear() <= yearTo) || s.getReleaseYear() == 0));
         moviesList.setValue(obsMovieList);
+    }
+
+    public void filterMoviesByGenres(String selectedGenres, MovieGenres genresObj) {
+
+        List<Integer> selectedMovieIds = new ArrayList<>();
+
+
+        // Genres abfragen -> wenn selectedGenres als Liste Obeservable<String> selectedGenres uebergeben wurde
+        /*for(String genreString : selectedGenres) {
+            for (int i = 0; i < genresObj.genres.length; i++) {
+                if (genreString == genresObj.genres[i].getName())
+                    selectedMovieIds.add(genresObj.genres[i].getId());
+            }
+        }*/
+
+        for (int i = 0; i < genresObj.genres.length; i++) {
+            if (selectedGenres == genresObj.genres[i].getName())
+                selectedMovieIds.add(genresObj.genres[i].getId());
+        }
+
+        Collection<Integer> collection = new ArrayList<Integer>(selectedMovieIds);
+
+        ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.movies.getResults()).filtered(s -> (s.searchInGenreIds(selectedMovieIds))));
+        moviesList.setValue(obsMovieList);
+
     }
 
     // Methode Run für Thread zum Suchen
@@ -201,9 +212,9 @@ public class MovieDb implements Runnable {
         this.movies = ApiQueryMovies(this.searchString);
         // ObservableList<String> obsMovieList = FXCollections.observableArrayList(this.movies.Movies2List());
         ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(this.movies.getResults());
-        backupMoviesList.setValue(moviesList);
-        Platform.runLater(() -> moviesList.setValue(obsMovieList));
 
+        // backupMoviesList.setValue(moviesList);
+        Platform.runLater(() -> moviesList.setValue(obsMovieList));
         for(Movies.Results item : movies.getResults())
         {
             if(item.getRelease_date()!=null) {

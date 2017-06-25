@@ -194,4 +194,16 @@ public class Favorites extends Movies {
             return false;
     }
 
+    public void filterFavMoviesByTitle(String title, boolean noFilter) {
+        if(!noFilter) {
+            ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.favorites).filtered(s -> (s.getTitle().toLowerCase().contains(title))));
+            favList.setValue(obsMovieList);
+        }
+        else
+        {
+            ObservableList<Movies.Results> obsMovieList = FXCollections.observableArrayList(FXCollections.observableArrayList(this.favorites).filtered(s -> true));
+            favList.setValue(obsMovieList);
+        }
+    }
+
 }
