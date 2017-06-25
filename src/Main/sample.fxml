@@ -499,7 +499,7 @@
                   <Label text="Stylesheet:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <ComboBox fx:id="stylesheetComboBox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <Label fx:id="shortInfoLabel" text="Kurzinfo:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label text="Die BeHiRi-App ist eine Anwendung zur Verwaltung von Filmen für Film-Fans gedacht, viel Spaß damit!!!" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <Label text="Die BeHiRi-App ist eine Anwendung zur Verwaltung von Filmen und ist für Film-Fans gedacht, viel Spaß damit!!!" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                   <Label text="BeHiRi-App, Version 1.0" GridPane.columnIndex="1">
                      <GridPane.margin>
                         <Insets />
