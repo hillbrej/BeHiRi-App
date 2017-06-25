@@ -129,7 +129,7 @@ public class MovieDb implements Runnable {
             // System.out.println("URL:" + url);
 
             URL url = new URI("https", this.host, this.pathMovieSearch, queryString, null).toURL();
-            Reader reader = new InputStreamReader(url.openStream(), "UTF-8"); // Stream für den Inhalt an URL öffnen
+            Reader reader = new InputStreamReader(url.openStream(), "UTF-8" ); // Stream für den Inhalt an URL öffnen
 
             // Zuweisung über GSON
             Movies movies = new Gson().fromJson(reader, Movies.class);

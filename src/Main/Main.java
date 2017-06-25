@@ -11,6 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         //root.getStylesheets().add("Main/stylesheet.css");
         //root.getStylesheets().add("Main/stylesheet2.css");//style laden am anfang

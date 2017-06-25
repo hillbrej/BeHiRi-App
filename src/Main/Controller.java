@@ -534,6 +534,17 @@ public class Controller {
 
                 tabPane.cursorProperty().setValue(Cursor.WAIT);
                 try {
+                    search = search.toLowerCase();
+
+                    if(search.contains("ä"))
+                        search = search.replace("ä", "ae");
+
+                    if(search.contains("ö"))
+                        search = search.replace("ö", "oe");
+
+                    if(search.contains("ü"))
+                        search = search.replace("ü", "ue");
+
                     comboBoxYearFrom.getSelectionModel().select(null);
                     comboBoxYearTo.getSelectionModel().select(null);
 
